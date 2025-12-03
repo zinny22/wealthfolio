@@ -1,6 +1,7 @@
 // src/features/goals/components/goals-summary.tsx
 "use client";
 
+import { Card } from "@/components/ui/card";
 import { GoalYearRow } from "../types";
 
 interface GoalsSummaryProps {
@@ -10,9 +11,9 @@ interface GoalsSummaryProps {
 export function GoalsSummary({ goals }: GoalsSummaryProps) {
   if (!goals || goals.length === 0) {
     return (
-      <div className="rounded-lg bg-slate-900 p-4 text-sm text-slate-400">
+      <Card className="text-sm text-muted-foreground">
         목표 데이터가 없습니다.
-      </div>
+      </Card>
     );
   }
 
@@ -25,23 +26,34 @@ export function GoalsSummary({ goals }: GoalsSummaryProps) {
   );
 
   return (
-    <div className="space-y-3 rounded-lg bg-slate-900 p-4 text-sm">
-      <div className="flex justify-between">
-        <span className="text-slate-400">기간</span>
-        <span>
-          {firstYear} ~ {lastYear}년
+    <Card className="space-y-4 text-sm">
+      <div className="flex items-center justify-between border-b border-border pb-3">
+        <span className="text-muted-foreground font-medium uppercase tracking-wide text-xs">
+          Period
+        </span>
+        <span className="font-medium text-foreground font-mono-num">
+          {firstYear} ~ {lastYear}
         </span>
       </div>
-      <div className="flex justify-between">
-        <span className="text-slate-400">총 필요 자금</span>
-        <span className="font-semibold">{total.toLocaleString()} 원</span>
+      <div className="space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground">Total Required</span>
+          <span className="font-bold text-foreground text-lg font-mono-num">
+            {total.toLocaleString()}
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-muted-foreground">Peak Spending Year</span>
+          <div className="text-right">
+            <span className="text-foreground font-mono-num block">
+              {maxRow.year} ({maxRow.age}yo)
+            </span>
+            <span className="text-xs text-muted-foreground font-mono-num">
+              {maxRow.totalNeeded.toLocaleString()}
+            </span>
+          </div>
+        </div>
       </div>
-      <div className="flex justify-between">
-        <span className="text-slate-400">가장 큰 지출 연도</span>
-        <span>
-          {maxRow.year}년 (약 {maxRow.totalNeeded.toLocaleString()} 원)
-        </span>
-      </div>
-    </div>
+    </Card>
   );
 }

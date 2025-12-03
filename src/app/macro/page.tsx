@@ -1,24 +1,32 @@
 "use client";
 
 import { mockMacroData } from "@/features/macro/mock";
+import { Card } from "@/components/ui/card";
 
 export default function MacroPage() {
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">거시경제 지표</h1>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        거시경제 지표
+      </h1>
 
-      <div className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {mockMacroData.map((item) => (
-          <div
-            key={item.name}
-            className="p-4 border rounded-lg bg-white shadow-sm"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-lg font-semibold">{item.name}</span>
-              <span className="text-gray-700 font-medium">{item.value}</span>
+          <Card key={item.name} className="flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  {item.name}
+                </h3>
+              </div>
+              <p className="mt-2 text-2xl font-bold text-foreground">
+                {item.value}
+              </p>
             </div>
-            <p className="text-gray-500 text-sm">{item.description}</p>
-          </div>
+            <p className="mt-4 text-xs text-muted-foreground">
+              {item.description}
+            </p>
+          </Card>
         ))}
       </div>
     </div>

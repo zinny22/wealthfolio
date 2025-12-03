@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Sidebar } from "@/components/layout/sidebar";
 
 export const metadata: Metadata = {
-  title: "Matt 자산관리 대시보드",
-  description: "엑셀 기반 개인 자산관리 웹 버전 (Mock Data)",
+  title: "Wealthfolio | 개인 자산관리",
+  description: "스마트한 자산 관리를 위한 대시보드",
 };
 
 export default function RootLayout({
@@ -12,32 +13,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
-      <body className="min-h-screen bg-slate-950 text-slate-50">
-        <div className="mx-auto max-w-5xl px-4 py-6">
-          <header className="mb-6 flex items-center justify-between">
-            <h1 className="text-xl font-semibold">
-              Matt 자산관리 대시보드 (Mock)
-            </h1>
-            <nav className="flex gap-4 text-sm text-slate-300">
-              <a href="/" className="hover:text-white">
-                대시보드
-              </a>
-              <a href="/net-worth" className="hover:text-white">
-                순자산 추이
-              </a>
-              <a href="/goals" className="hover:text-white">
-                목표 자산
-              </a>
-              <a href="/portfolio" className="hover:text-white">
-                포트폴리오
-              </a>
-              <a href="/macro" className="hover:text-white">
-                거시경제
-              </a>
-            </nav>
-          </header>
-          {children}
+    <html lang="ko" className="dark h-full">
+      <body className="h-full bg-background text-foreground antialiased selection:bg-primary/30">
+        <div className="flex h-full">
+          <Sidebar />
+          <main className="flex-1 overflow-y-auto md:ml-64">
+            <div className="container mx-auto max-w-6xl px-6 py-10">
+              {children}
+            </div>
+          </main>
         </div>
       </body>
     </html>

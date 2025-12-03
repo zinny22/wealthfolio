@@ -7,8 +7,10 @@ export default function NetWorthPage() {
   const snapshots = getMockNetWorthSnapshots();
 
   return (
-    <main className="space-y-4">
-      <h2 className="text-lg font-semibold">순자산 추이 (Mock Data)</h2>
+    <main className="space-y-6">
+      <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        순자산 추이 (Mock Data)
+      </h1>
       <NetWorthSummary snapshots={snapshots} />
       <NetWorthTable snapshots={snapshots} />
     </main>

@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Professional Fintech Dark Theme - High Contrast & Deep Depth */
+  --background: #050505;
+  --foreground: #ededed;
+  
+  /* Surface Colors - Almost Black Cards */
+  --card: #0a0a0a;
+  --card-foreground: #ededed;
+  
+  --popover: #0a0a0a;
+  --popover-foreground: #ededed;
+  
+  /* Primary - White for high contrast actions */
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  
+  /* Secondary - Dark Grey for subtle elements */
+  --secondary: #171717;
+  --secondary-foreground: #a1a1aa;
+  
+  --muted: #171717;
+  --muted-foreground: #666666;
+  
+  --accent: #171717;
+  --accent-foreground: #ffffff;
+  
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fecaca;
+  
+  /* Borders - Very subtle, dark grey */
+  --border: #262626;
+  --input: #262626;
+  --ring: #525252;
+
+  /* Functional Colors */
+  --chart-up: #10b981;   /* Emerald 500 */
+  --chart-down: #ef4444; /* Red 500 */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-up: var(--chart-up);
+  --color-chart-down: var(--chart-down);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Utility for Monospace Numbers */
+.font-mono-num {
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: -0.02em;
 }
