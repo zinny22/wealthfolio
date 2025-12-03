@@ -42,7 +42,10 @@ export default function InsurancePage() {
           </p>
         </div>
         <div className="col-span-1 flex justify-end md:block">
-          <Button onClick={() => setIsAddModalOpen(true)}>
+          <Button
+            onClick={() => setIsAddModalOpen(true)}
+            className="h-8 text-xs md:h-10 md:text-sm"
+          >
             + Add Insurance
           </Button>
         </div>

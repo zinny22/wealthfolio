@@ -39,7 +39,12 @@ export default function SavingsPage() {
           </p>
         </div>
         <div className="col-span-1 flex justify-end md:block">
-          <Button onClick={() => setIsAddModalOpen(true)}>+ Add Savings</Button>
+          <Button
+            onClick={() => setIsAddModalOpen(true)}
+            className="h-8 text-xs md:h-10 md:text-sm"
+          >
+            + Add Savings
+          </Button>
         </div>
       </div>
 

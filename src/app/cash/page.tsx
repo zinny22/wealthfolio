@@ -39,7 +39,12 @@ export default function CashPage() {
           </p>
         </div>
         <div className="col-span-1 flex justify-end md:block">
-          <Button onClick={() => setIsAddModalOpen(true)}>+ Add Account</Button>
+          <Button
+            onClick={() => setIsAddModalOpen(true)}
+            className="h-8 text-xs md:h-10 md:text-sm"
+          >
+            + Add Account
+          </Button>
         </div>
       </div>
 
