@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Sidebar } from "@/components/layout/sidebar";
+import { Sidebar, MobileHeader } from "@/components/layout/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className="dark h-full">
+    <html lang="ko" className="dark h-full" suppressHydrationWarning>
       <body className="h-full bg-background text-foreground antialiased selection:bg-primary/30">
         <ThemeProvider
           attribute="class"
@@ -22,13 +22,16 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex h-full">
+          <div className="flex h-full flex-col md:flex-row">
             <Sidebar />
-            <main className="flex-1 overflow-y-auto md:ml-64">
-              <div className="container mx-auto max-w-6xl px-6 py-10">
-                {children}
-              </div>
-            </main>
+            <div className="flex flex-1 flex-col md:ml-60">
+              <MobileHeader />
+              <main className="flex-1 overflow-y-auto">
+                <div className="container mx-auto max-w-6xl px-6 py-10">
+                  {children}
+                </div>
+              </main>
+            </div>
           </div>
         </ThemeProvider>
       </body>

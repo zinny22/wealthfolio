@@ -26,19 +26,19 @@ export default function SavingsPage() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
       />
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+      <div className="grid grid-cols-2 gap-4 md:flex md:items-center md:justify-between">
+        <h1 className="col-span-2 text-2xl font-bold tracking-tight text-foreground md:col-span-1">
           Savings & Deposits (예적금)
         </h1>
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">
-              Total Savings (Principal)
-            </p>
-            <p className="text-xl font-bold text-foreground font-mono-num">
-              ₩ {totalSavings.toLocaleString()}
-            </p>
-          </div>
+        <div className="col-span-1 text-left md:text-right">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">
+            Total Savings (Principal)
+          </p>
+          <p className="text-xl font-bold text-foreground font-mono-num">
+            ₩ {totalSavings.toLocaleString()}
+          </p>
+        </div>
+        <div className="col-span-1 flex justify-end md:block">
           <Button onClick={() => setIsAddModalOpen(true)}>+ Add Savings</Button>
         </div>
       </div>
