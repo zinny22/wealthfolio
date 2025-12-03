@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/", icon: "□" },
-  { label: "Net Worth", href: "/net-worth", icon: "△" },
-  { label: "Goals", href: "/goals", icon: "◇" },
   { label: "Portfolio", href: "/portfolio", icon: "○" },
-  { label: "Macro", href: "/macro", icon: "☆" },
+  { label: "Cash", href: "/cash", icon: "△" },
+  { label: "Savings", href: "/savings", icon: "◇" },
+  { label: "Insurance", href: "/insurance", icon: "🛡️" },
 ];
 
 export function Sidebar() {

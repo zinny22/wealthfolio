@@ -1,21 +1,38 @@
-// src/app/page.tsx
+"use client";
 
-import { GoalsSummary } from "@/features/goals/components/goals-summary";
-import { getMockGoals } from "@/features/goals/mock";
-import { NetWorthSummary } from "@/features/net-worth/components/net-worth-summary";
-import { getMockNetWorthSnapshots } from "@/features/net-worth/mock";
 import { Card, CardTitle, CardValue } from "@/components/ui/card";
+import { useAssetStore } from "@/features/assets/store";
+import { calculateTotalAssets } from "@/features/assets/utils";
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
-  const netWorthSnapshots = getMockNetWorthSnapshots();
-  const goals = getMockGoals();
+  // Hydration fix for persist middleware
+  const [isMounted, setIsMounted] = useState(false);
+  const { stocks, cashAccounts, savings, insurances, exchangeRate } =
+    useAssetStore();
 
-  const latest = netWorthSnapshots[netWorthSnapshots.length - 1];
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  const totalGoal = goals.reduce((sum, g) => sum + g.totalNeeded, 0);
-  const currentNetWorth = latest?.netWorth ?? 0;
-  const goalProgress =
-    totalGoal > 0 ? Math.min((currentNetWorth / totalGoal) * 100, 999) : 0;
+  if (!isMounted) {
+    return null; // or a loading skeleton
+  }
+
+  const { stockTotal, cashTotal, savingsTotal, insuranceTotal, grandTotal } =
+    calculateTotalAssets(
+      stocks,
+      cashAccounts,
+      savings,
+      insurances,
+      exchangeRate.rate
+    );
+
+  // Calculate percentages for the bar chart
+  const stockPct = grandTotal > 0 ? (stockTotal / grandTotal) * 100 : 0;
+  const cashPct = grandTotal > 0 ? (cashTotal / grandTotal) * 100 : 0;
+  const savingsPct = grandTotal > 0 ? (savingsTotal / grandTotal) * 100 : 0;
+  const insurancePct = grandTotal > 0 ? (insuranceTotal / grandTotal) * 100 : 0;
 
   return (
     <main className="space-y-10">
@@ -25,78 +42,158 @@ export default function DashboardPage() {
             Dashboard Overview
           </h2>
           <span className="text-xs text-muted-foreground font-mono-num">
-            {new Date().toLocaleDateString()}
+            {new Date().toLocaleDateString()} • USD/KRW:{" "}
+            {exchangeRate.rate.toLocaleString()}
           </span>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+
+        <div className="grid gap-4 md:grid-cols-4">
           <Card>
-            <CardTitle>Total Net Worth</CardTitle>
-            <CardValue>{currentNetWorth.toLocaleString()}</CardValue>
-            <div className="mt-3 flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">vs Last Month</span>
-              <span
-                className={`font-mono-num font-medium ${
-                  latest.momChangeAmount >= 0
-                    ? "text-chart-up"
-                    : "text-chart-down"
-                }`}
-              >
-                {latest.momChangeAmount > 0 ? "+" : ""}
-                {latest.momChangeRate.toFixed(1)}%
-              </span>
-            </div>
-          </Card>
-          <Card>
-            <CardTitle>FIRE Goal Target</CardTitle>
-            <CardValue>{totalGoal.toLocaleString()}</CardValue>
+            <CardTitle>Total Assets</CardTitle>
+            <CardValue>₩ {grandTotal.toLocaleString()}</CardValue>
             <div className="mt-3 text-xs text-muted-foreground">
-              Estimated requirement
+              Stocks + Cash + Savings + Insurance
             </div>
           </Card>
           <Card>
-            <CardTitle>Goal Progress</CardTitle>
-            <CardValue>{goalProgress.toFixed(1)}%</CardValue>
-            <div className="mt-4 h-1 w-full bg-secondary">
-              <div
-                className="h-1 bg-primary transition-all"
-                style={{ width: `${Math.min(goalProgress, 100)}%` }}
-              />
+            <CardTitle>Stock Holdings</CardTitle>
+            <CardValue>₩ {stockTotal.toLocaleString()}</CardValue>
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="h-2 w-2 rounded-full bg-emerald-500" />
+              {stockPct.toFixed(1)}%
+            </div>
+          </Card>
+          <Card>
+            <CardTitle>Cash & Savings</CardTitle>
+            <CardValue>
+              ₩ {(cashTotal + savingsTotal).toLocaleString()}
+            </CardValue>
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="h-2 w-2 rounded-full bg-blue-500" />
+              {(cashPct + savingsPct).toFixed(1)}%
+            </div>
+          </Card>
+          <Card>
+            <CardTitle>Insurance & Pension</CardTitle>
+            <CardValue>₩ {insuranceTotal.toLocaleString()}</CardValue>
+            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="h-2 w-2 rounded-full bg-orange-500" />
+              {insurancePct.toFixed(1)}%
             </div>
           </Card>
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <h3 className="text-sm font-bold uppercase text-foreground">
-              Net Worth Summary
-            </h3>
-            <a
-              href="/net-worth"
-              className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              VIEW ALL &rarr;
-            </a>
-          </div>
-          <NetWorthSummary snapshots={netWorthSnapshots} />
-        </section>
+      <section className="space-y-4">
+        <h3 className="text-sm font-bold uppercase text-foreground">
+          Asset Breakdown
+        </h3>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {/* Stocks Breakdown */}
+          <Card className="p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-medium text-muted-foreground">
+                Stocks
+              </span>
+              <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                {stockPct.toFixed(1)}%
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold font-mono-num text-foreground">
+                ₩ {stockTotal.toLocaleString()}
+              </span>
+            </div>
+            <div className="mt-3 h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+              <div
+                className="h-full rounded-full bg-emerald-500 transition-all duration-500"
+                style={{ width: `${stockPct}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {stocks.length} Holdings
+            </p>
+          </Card>
 
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-border pb-2">
-            <h3 className="text-sm font-bold uppercase text-foreground">
-              FIRE Goals
-            </h3>
-            <a
-              href="/goals"
-              className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
-            >
-              VIEW ALL &rarr;
-            </a>
-          </div>
-          <GoalsSummary goals={goals} />
-        </section>
-      </div>
+          {/* Cash Breakdown */}
+          <Card className="p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-medium text-muted-foreground">
+                Cash
+              </span>
+              <span className="text-xs font-bold text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-full">
+                {cashPct.toFixed(1)}%
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold font-mono-num text-foreground">
+                ₩ {cashTotal.toLocaleString()}
+              </span>
+            </div>
+            <div className="mt-3 h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+              <div
+                className="h-full rounded-full bg-blue-500 transition-all duration-500"
+                style={{ width: `${cashPct}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {cashAccounts.length} Accounts
+            </p>
+          </Card>
+
+          {/* Savings Breakdown */}
+          <Card className="p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-medium text-muted-foreground">
+                Savings
+              </span>
+              <span className="text-xs font-bold text-violet-500 bg-violet-500/10 px-2 py-0.5 rounded-full">
+                {savingsPct.toFixed(1)}%
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold font-mono-num text-foreground">
+                ₩ {savingsTotal.toLocaleString()}
+              </span>
+            </div>
+            <div className="mt-3 h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+              <div
+                className="h-full rounded-full bg-violet-500 transition-all duration-500"
+                style={{ width: `${savingsPct}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {savings.length} Products
+            </p>
+          </Card>
+
+          {/* Insurance Breakdown */}
+          <Card className="p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-sm font-medium text-muted-foreground">
+                Insurance
+              </span>
+              <span className="text-xs font-bold text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded-full">
+                {insurancePct.toFixed(1)}%
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold font-mono-num text-foreground">
+                ₩ {insuranceTotal.toLocaleString()}
+              </span>
+            </div>
+            <div className="mt-3 h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+              <div
+                className="h-full rounded-full bg-orange-500 transition-all duration-500"
+                style={{ width: `${insurancePct}%` }}
+              />
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {insurances.length} Policies
+            </p>
+          </Card>
+        </div>
+      </section>
     </main>
   );
 }
