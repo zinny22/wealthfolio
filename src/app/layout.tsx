@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/sidebar";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: "Wealthfolio | 개인 자산관리",
@@ -15,14 +16,21 @@ export default function RootLayout({
   return (
     <html lang="ko" className="dark h-full">
       <body className="h-full bg-background text-foreground antialiased selection:bg-primary/30">
-        <div className="flex h-full">
-          <Sidebar />
-          <main className="flex-1 overflow-y-auto md:ml-64">
-            <div className="container mx-auto max-w-6xl px-6 py-10">
-              {children}
-            </div>
-          </main>
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="flex h-full">
+            <Sidebar />
+            <main className="flex-1 overflow-y-auto md:ml-64">
+              <div className="container mx-auto max-w-6xl px-6 py-10">
+                {children}
+              </div>
+            </main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

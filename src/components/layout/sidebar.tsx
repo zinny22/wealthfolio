@@ -2,13 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ModeToggle } from "@/components/mode-toggle";
+import {
+  LayoutDashboard,
+  LineChart,
+  Wallet,
+  PiggyBank,
+  ShieldCheck,
+} from "lucide-react";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", href: "/", icon: "□" },
-  { label: "Portfolio", href: "/portfolio", icon: "○" },
-  { label: "Cash", href: "/cash", icon: "△" },
-  { label: "Savings", href: "/savings", icon: "◇" },
-  { label: "Insurance", href: "/insurance", icon: "🛡️" },
+  { label: "대시보드", href: "/", icon: LayoutDashboard },
+  { label: "포트폴리오", href: "/portfolio", icon: LineChart },
+  { label: "입출금", href: "/cash", icon: Wallet },
+  { label: "예적금", href: "/savings", icon: PiggyBank },
+  { label: "보험/연금", href: "/insurance", icon: ShieldCheck },
 ];
 
 export function Sidebar() {
@@ -19,12 +27,16 @@ export function Sidebar() {
       <div className="flex h-14 items-center px-6 border-b border-border">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm font-bold tracking-widest uppercase text-foreground"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight"
         >
-          <span>Wealthfolio</span>
+          <div className="h-6 w-6 rounded-full bg-primary" />
+          Wealthfolio
         </Link>
+        <div className="ml-auto">
+          <ModeToggle />
+        </div>
       </div>
-      <nav className="flex-1 overflow-y-auto px-3 py-6">
+      <nav className="flex-1 space-y-1 px-4 py-4">
         <ul className="space-y-0.5">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
@@ -38,15 +50,7 @@ export function Sidebar() {
                       : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
                   }`}
                 >
-                  <span
-                    className={`text-xs transition-opacity ${
-                      isActive
-                        ? "opacity-100 text-primary"
-                        : "opacity-50 group-hover:opacity-100"
-                    }`}
-                  >
-                    {item.icon}
-                  </span>
+                  <item.icon className="h-4 w-4" />
                   {item.label}
                 </Link>
               </li>
