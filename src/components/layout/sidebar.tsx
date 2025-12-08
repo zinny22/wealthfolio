@@ -1,8 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ModeToggle } from "@/components/mode-toggle";
+import { useAuth } from "@/context/auth-context";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 import {
   LayoutDashboard,
   LineChart,
@@ -10,6 +13,8 @@ import {
   PiggyBank,
   ShieldCheck,
   Menu,
+  LogOut,
+  User as UserIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -63,6 +68,72 @@ function NavContent({
   );
 }
 
+function UserProfile() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  if (loading) return <div className="p-4 text-xs text-center">Loading...</div>;
+
+  if (!user) {
+    return (
+      <div className="flex flex-col gap-2 p-4">
+        <Button
+          size="sm"
+          variant="default"
+          className="w-full"
+          onClick={() => router.push("/login")}
+        >
+          로그인
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          className="w-full"
+          onClick={() => router.push("/signup")}
+        >
+          회원가입
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2 p-4">
+      <div className="flex items-center gap-3 px-2 py-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary border border-border">
+          <UserIcon className="h-4 w-4" />
+        </div>
+        <div className="flex flex-col overflow-hidden">
+          <span className="text-xs font-medium text-foreground truncate">
+            {user.displayName || "사용자"}
+          </span>
+          <span className="text-[10px] text-muted-foreground truncate">
+            {user.email}
+          </span>
+        </div>
+      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="w-full justify-start text-muted-foreground hover:text-foreground"
+        onClick={handleLogout}
+      >
+        <LogOut className="mr-2 h-4 w-4" />
+        로그아웃
+      </Button>
+    </div>
+  );
+}
+
 export function Sidebar() {
   const pathname = usePathname();
 
@@ -81,16 +152,8 @@ export function Sidebar() {
         </div>
       </div>
       <NavContent pathname={pathname} />
-      <div className="border-t border-border p-4">
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="h-6 w-6 rounded-full bg-secondary border border-border" />
-          <div className="flex flex-col">
-            <span className="text-xs font-medium text-foreground">Matt</span>
-            <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-              Pro
-            </span>
-          </div>
-        </div>
+      <div className="border-t border-border">
+        <UserProfile />
       </div>
     </aside>
   );

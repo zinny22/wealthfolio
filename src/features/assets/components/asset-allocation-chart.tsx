@@ -1,31 +1,23 @@
 "use client";
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { useAssetStore } from "@/features/assets/store";
-import { calculateTotalAssets } from "@/features/assets/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useEffect, useState } from "react";
 
-export function AssetAllocationChart() {
-  const [isMounted, setIsMounted] = useState(false);
-  const { stocks, cashAccounts, savings, insurances, exchangeRate } =
-    useAssetStore();
+interface AssetAllocationChartProps {
+  stockTotal: number;
+  cashTotal: number;
+  savingsTotal: number;
+  insuranceTotal: number;
+  grandTotal: number;
+}
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) return null;
-
-  const { stockTotal, cashTotal, savingsTotal, insuranceTotal, grandTotal } =
-    calculateTotalAssets(
-      stocks,
-      cashAccounts,
-      savings,
-      insurances,
-      exchangeRate.rate
-    );
-
+export function AssetAllocationChart({
+  stockTotal,
+  cashTotal,
+  savingsTotal,
+  insuranceTotal,
+  grandTotal,
+}: AssetAllocationChartProps) {
   const data = [
     { name: "Stocks", value: stockTotal, color: "#10b981" }, // emerald-500
     { name: "Cash", value: cashTotal, color: "#3b82f6" }, // blue-500

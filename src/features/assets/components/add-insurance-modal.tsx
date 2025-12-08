@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAssetStore } from "@/features/assets/store";
 import { Insurance } from "@/features/assets/types";
+import { useAuth } from "@/context/auth-context";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface AddInsuranceModalProps {
   isOpen: boolean;
@@ -13,7 +15,8 @@ interface AddInsuranceModalProps {
 }
 
 export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
-  const { addInsurance } = useAssetStore();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<Insurance>>({
     company: "",
     description: "",
@@ -24,24 +27,35 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
     totalPayment: 0,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newItem: Insurance = {
-      id: crypto.randomUUID(),
-      ...formData,
-    } as Insurance;
+    if (!user) return;
 
-    addInsurance(newItem);
-    onClose();
-    setFormData({
-      company: "",
-      description: "",
-      joinDate: new Date().toISOString().split("T")[0],
-      endDate: "",
-      monthlyPayment: 0,
-      payout: 0,
-      totalPayment: 0,
-    });
+    setLoading(true);
+    try {
+      const newItem = {
+        ...formData,
+        createdAt: serverTimestamp(),
+      };
+
+      await addDoc(collection(db, "users", user.uid, "insurances"), newItem);
+
+      onClose();
+      setFormData({
+        company: "",
+        description: "",
+        joinDate: new Date().toISOString().split("T")[0],
+        endDate: "",
+        monthlyPayment: 0,
+        payout: 0,
+        totalPayment: 0,
+      });
+    } catch (error) {
+      console.error("Error adding insurance:", error);
+      alert("보험/연금 추가 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -150,10 +164,17 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={loading}
+          >
             Cancel
           </Button>
-          <Button type="submit">Add Insurance</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Adding..." : "Add Insurance"}
+          </Button>
         </div>
       </form>
     </Modal>

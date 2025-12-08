@@ -8,22 +8,90 @@ import {
   CardValue,
 } from "@/components/ui/card";
 import { AssetAllocationChart } from "@/features/assets/components/asset-allocation-chart";
-import { useAssetStore } from "@/features/assets/store";
 import { calculateTotalAssets } from "@/features/assets/utils";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/auth-context";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import {
+  StockHolding,
+  CashAccount,
+  SavingDeposit,
+  Insurance,
+} from "@/features/assets/types";
 
 export default function DashboardPage() {
-  // Hydration fix for persist middleware
+  const { user } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
-  const { stocks, cashAccounts, savings, insurances, exchangeRate } =
-    useAssetStore();
+  const [stocks, setStocks] = useState<StockHolding[]>([]);
+  const [cashAccounts, setCashAccounts] = useState<CashAccount[]>([]);
+  const [savings, setSavings] = useState<SavingDeposit[]>([]);
+  const [insurances, setInsurances] = useState<Insurance[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [exchangeRate, setExchangeRate] = useState(1400);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!user) {
+      setStocks([]);
+      setCashAccounts([]);
+      setSavings([]);
+      setInsurances([]);
+      setLoading(false);
+      return;
+    }
+
+    const unsubStocks = onSnapshot(
+      collection(db, "users", user.uid, "stocks"),
+      (snap) => {
+        setStocks(
+          snap.docs.map((d) => ({ id: d.id, ...d.data() } as StockHolding))
+        );
+      }
+    );
+
+    const unsubCash = onSnapshot(
+      collection(db, "users", user.uid, "cash_accounts"),
+      (snap) => {
+        setCashAccounts(
+          snap.docs.map((d) => ({ id: d.id, ...d.data() } as CashAccount))
+        );
+      }
+    );
+
+    const unsubSavings = onSnapshot(
+      collection(db, "users", user.uid, "savings"),
+      (snap) => {
+        setSavings(
+          snap.docs.map((d) => ({ id: d.id, ...d.data() } as SavingDeposit))
+        );
+      }
+    );
+
+    const unsubInsurances = onSnapshot(
+      collection(db, "users", user.uid, "insurances"),
+      (snap) => {
+        setInsurances(
+          snap.docs.map((d) => ({ id: d.id, ...d.data() } as Insurance))
+        );
+      }
+    );
+
+    setLoading(false);
+
+    return () => {
+      unsubStocks();
+      unsubCash();
+      unsubSavings();
+      unsubInsurances();
+    };
+  }, [user]);
+
   if (!isMounted) {
-    return null; // or a loading skeleton
+    return null;
   }
 
   const { stockTotal, cashTotal, savingsTotal, insuranceTotal, grandTotal } =
@@ -32,7 +100,7 @@ export default function DashboardPage() {
       cashAccounts,
       savings,
       insurances,
-      exchangeRate.rate
+      exchangeRate
     );
 
   // Calculate percentages for the bar chart
@@ -50,7 +118,7 @@ export default function DashboardPage() {
           </h2>
           <span className="text-xs text-muted-foreground font-mono-num">
             {new Date().toLocaleDateString()} • USD/KRW:{" "}
-            {exchangeRate.rate.toLocaleString()}
+            {exchangeRate.toLocaleString()}
           </span>
         </div>
 
@@ -245,7 +313,13 @@ export default function DashboardPage() {
 
         <section className="h-full">
           <div className="h-full pt-9">
-            <AssetAllocationChart />
+            <AssetAllocationChart
+              stockTotal={stockTotal}
+              cashTotal={cashTotal}
+              savingsTotal={savingsTotal}
+              insuranceTotal={insuranceTotal}
+              grandTotal={grandTotal}
+            />
           </div>
         </section>
       </div>

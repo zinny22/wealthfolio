@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAssetStore } from "@/features/assets/store";
 import { SavingDeposit } from "@/features/assets/types";
+import { useAuth } from "@/context/auth-context";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface AddSavingModalProps {
   isOpen: boolean;
@@ -13,7 +15,8 @@ interface AddSavingModalProps {
 }
 
 export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
-  const { addSaving } = useAssetStore();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<SavingDeposit>>({
     type: "예금",
     bankName: "",
@@ -27,41 +30,51 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
     exchangeRate: 1,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
 
-    // Simple calculation for maturity amounts (Example logic)
-    const interest =
-      (formData.amount || 0) *
-      ((formData.interestRate || 0) / 100) *
-      ((formData.period || 12) / 12);
-    const taxRate = formData.isTaxFree ? 0 : 0.154;
-    const maturityAmountPreTax = (formData.amount || 0) + interest;
-    const maturityAmountPostTax =
-      (formData.amount || 0) + interest * (1 - taxRate);
+    setLoading(true);
+    try {
+      // Simple calculation for maturity amounts (Example logic)
+      const interest =
+        (formData.amount || 0) *
+        ((formData.interestRate || 0) / 100) *
+        ((formData.period || 12) / 12);
+      const taxRate = formData.isTaxFree ? 0 : 0.154;
+      const maturityAmountPreTax = (formData.amount || 0) + interest;
+      const maturityAmountPostTax =
+        (formData.amount || 0) + interest * (1 - taxRate);
 
-    const newItem: SavingDeposit = {
-      id: crypto.randomUUID(),
-      ...formData,
-      maturityAmountPreTax,
-      maturityAmountPostTax,
-      maturityAmountOriginal: maturityAmountPreTax, // Simplified
-    } as SavingDeposit;
+      const newItem = {
+        ...formData,
+        maturityAmountPreTax,
+        maturityAmountPostTax,
+        maturityAmountOriginal: maturityAmountPreTax, // Simplified
+        createdAt: serverTimestamp(),
+      };
 
-    addSaving(newItem);
-    onClose();
-    setFormData({
-      type: "예금",
-      bankName: "",
-      joinDate: new Date().toISOString().split("T")[0],
-      interestRate: 0,
-      period: 12,
-      amount: 0,
-      isTaxFree: false,
-      currency: "KRW",
-      maturityDate: "",
-      exchangeRate: 1,
-    });
+      await addDoc(collection(db, "users", user.uid, "savings"), newItem);
+
+      onClose();
+      setFormData({
+        type: "예금",
+        bankName: "",
+        joinDate: new Date().toISOString().split("T")[0],
+        interestRate: 0,
+        period: 12,
+        amount: 0,
+        isTaxFree: false,
+        currency: "KRW",
+        maturityDate: "",
+        exchangeRate: 1,
+      });
+    } catch (error) {
+      console.error("Error adding saving:", error);
+      alert("예적금 추가 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -191,10 +204,17 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={loading}
+          >
             Cancel
           </Button>
-          <Button type="submit">Add Savings</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Adding..." : "Add Savings"}
+          </Button>
         </div>
       </form>
     </Modal>

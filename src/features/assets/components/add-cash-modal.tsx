@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAssetStore } from "@/features/assets/store";
 import { CashAccount } from "@/features/assets/types";
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useAuth } from "@/context/auth-context";
 
 interface AddCashModalProps {
   isOpen: boolean;
@@ -13,7 +15,8 @@ interface AddCashModalProps {
 }
 
 export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
-  const { addCashAccount } = useAssetStore();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<CashAccount>>({
     bankName: "",
     accountName: "",
@@ -21,21 +24,30 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
     currency: "KRW",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newItem: CashAccount = {
-      id: crypto.randomUUID(),
-      ...formData,
-    } as CashAccount;
+    if (!user) return;
 
-    addCashAccount(newItem);
-    onClose();
-    setFormData({
-      bankName: "",
-      accountName: "",
-      balance: 0,
-      currency: "KRW",
-    });
+    setLoading(true);
+    try {
+      await addDoc(collection(db, "users", user.uid, "cash_accounts"), {
+        ...formData,
+        createdAt: serverTimestamp(),
+      });
+
+      onClose();
+      setFormData({
+        bankName: "",
+        accountName: "",
+        balance: 0,
+        currency: "KRW",
+      });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      alert("자산 추가 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -102,10 +114,17 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
         </div>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onClose}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={loading}
+          >
             Cancel
           </Button>
-          <Button type="submit">Add Account</Button>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Adding..." : "Add Account"}
+          </Button>
         </div>
       </form>
     </Modal>
