@@ -19,16 +19,17 @@ import {
   SavingDeposit,
   Insurance,
 } from "@/features/assets/types";
+import { useExchangeRate } from "@/hooks/use-exchange-rate";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { rate: exchangeRate } = useExchangeRate();
   const [isMounted, setIsMounted] = useState(false);
   const [stocks, setStocks] = useState<StockHolding[]>([]);
   const [cashAccounts, setCashAccounts] = useState<CashAccount[]>([]);
   const [savings, setSavings] = useState<SavingDeposit[]>([]);
   const [insurances, setInsurances] = useState<Insurance[]>([]);
   const [loading, setLoading] = useState(true);
-  const [exchangeRate, setExchangeRate] = useState(1400);
 
   useEffect(() => {
     setIsMounted(true);

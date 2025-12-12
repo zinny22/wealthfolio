@@ -1,20 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { StockItem } from "@/features/assets/types";
 import { useAuth } from "@/context/auth-context";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface AddStockModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialData?: StockItem | null;
 }
 
-export function AddStockModal({ isOpen, onClose }: AddStockModalProps) {
+export function AddStockModal({
+  isOpen,
+  onClose,
+  initialData,
+}: AddStockModalProps) {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Partial<StockItem>>({
@@ -32,31 +43,23 @@ export function AddStockModal({ isOpen, onClose }: AddStockModalProps) {
     note: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return;
-
-    setLoading(true);
-    try {
-      const unitPrice = formData.unitPrice || 0;
-      const quantity = formData.quantity || 0;
-      const exchangeRate =
-        formData.currency === "USD" ? formData.exchangeRate || 1400 : 1;
-
-      const newItem = {
-        ...formData,
-        currentPrice: unitPrice, // 초기값
-        amount: unitPrice * quantity,
-        adjustedAvgPrice: unitPrice,
-        totalAmount: unitPrice * quantity,
-        totalAmountKrw: unitPrice * quantity * exchangeRate,
-        realizedGain: 0,
-        createdAt: serverTimestamp(),
-      };
-
-      await addDoc(collection(db, "users", user.uid, "stocks"), newItem);
-
-      onClose();
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        ...initialData,
+        purchaseDate:
+          initialData.purchaseDate || new Date().toISOString().split("T")[0],
+        broker: initialData.broker || "",
+        name: initialData.name || "",
+        code: initialData.code || "",
+        tradeType: initialData.tradeType || "매수",
+        quantity: initialData.quantity || 0,
+        unitPrice: initialData.unitPrice || 0,
+        currency: initialData.currency || "USD",
+        exchangeRate: initialData.exchangeRate || 1400,
+        note: initialData.note || "",
+      });
+    } else {
       setFormData({
         purchaseDate: new Date().toISOString().split("T")[0],
         broker: "",
@@ -71,16 +74,61 @@ export function AddStockModal({ isOpen, onClose }: AddStockModalProps) {
         exchangeRate: 1400,
         note: "",
       });
+    }
+  }, [initialData, isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+
+    setLoading(true);
+    try {
+      const unitPrice = formData.unitPrice || 0;
+      const quantity = formData.quantity || 0;
+      const exchangeRate =
+        formData.currency === "USD" ? formData.exchangeRate || 1400 : 1;
+
+      const itemData = {
+        ...formData,
+        amount: unitPrice * quantity,
+        adjustedAvgPrice: unitPrice, // 단순화된 로직
+        totalAmount: unitPrice * quantity,
+        totalAmountKrw: unitPrice * quantity * exchangeRate,
+        updatedAt: serverTimestamp(),
+      };
+
+      if (initialData?.id) {
+        // Update existing doc
+        await updateDoc(
+          doc(db, "users", user.uid, "stocks", initialData.id),
+          itemData
+        );
+      } else {
+        // Create new doc
+        await addDoc(collection(db, "users", user.uid, "stocks"), {
+          ...itemData,
+          currentPrice: unitPrice, // 초기 생성 시에만 현재가 설정
+          realizedGain: 0,
+          createdAt: serverTimestamp(),
+        });
+      }
+
+      onClose();
+      // Form reset is handled by useEffect when modal closes or initialData changes
     } catch (error) {
-      console.error("Error adding stock:", error);
-      alert("주식 추가 중 오류가 발생했습니다.");
+      console.error("Error saving stock:", error);
+      alert("저장 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add New Stock">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={initialData ? "Edit Stock" : "Add New Stock"}
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -185,6 +233,26 @@ export function AddStockModal({ isOpen, onClose }: AddStockModalProps) {
           </div>
         </div>
 
+        {formData.currency === "USD" && (
+          <div>
+            <label className="text-xs font-medium text-muted-foreground">
+              Exchange Rate (Buying)
+            </label>
+            <Input
+              type="number"
+              step="0.01"
+              required
+              value={formData.exchangeRate}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  exchangeRate: Number(e.target.value),
+                })
+              }
+            />
+          </div>
+        )}
+
         <div className="flex justify-end gap-2 pt-4">
           <Button
             type="button"
@@ -195,7 +263,7 @@ export function AddStockModal({ isOpen, onClose }: AddStockModalProps) {
             Cancel
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Adding..." : "Add Stock"}
+            {loading ? "Saving..." : initialData ? "Update Stock" : "Add Stock"}
           </Button>
         </div>
       </form>

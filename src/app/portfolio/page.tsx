@@ -7,7 +7,7 @@ import {
   calculateStockProfitRate,
   calculateStockValuation,
 } from "@/features/assets/utils";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/auth-context";
 import {
@@ -20,14 +20,16 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { StockItem } from "@/features/assets/types";
+import { useExchangeRate } from "@/hooks/use-exchange-rate";
 
 export default function PortfolioPage() {
   const { user } = useAuth();
+  const { rate: exchangeRate } = useExchangeRate();
   const [isMounted, setIsMounted] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [stocks, setStocks] = useState<StockItem[]>([]);
+  const [editingStock, setEditingStock] = useState<StockItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const [exchangeRate, setExchangeRate] = useState(1400); // TODO: Fetch from API or DB
 
   useEffect(() => {
     setIsMounted(true);
@@ -82,11 +84,18 @@ export default function PortfolioPage() {
     0
   );
 
+  console.log(exchangeRate);
+
   return (
     <main className="space-y-6">
       <AddStockModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
+        key={editingStock ? editingStock.id : "new"}
+        isOpen={isAddModalOpen || !!editingStock}
+        onClose={() => {
+          setIsAddModalOpen(false);
+          setEditingStock(null);
+        }}
+        initialData={editingStock}
       />
       <div className="grid grid-cols-2 gap-4 md:flex md:items-center md:justify-between">
         <div className="col-span-2 md:flex md:items-baseline md:gap-4">
@@ -249,14 +258,24 @@ export default function PortfolioPage() {
                             </span>
                           </td>
                           <td className="px-4 py-3 text-center">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete(stock.id)}
-                              className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            <div className="flex items-center justify-center gap-1">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setEditingStock(stock)}
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDelete(stock.id)}
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </td>
                         </tr>
                       );
@@ -309,7 +328,15 @@ export default function PortfolioPage() {
                         {isProfit ? "+" : ""}
                         {profitRate.toFixed(2)}%
                       </span>
-                      <div className="mt-1">
+                      <div className="mt-1 flex justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingStock(stock)}
+                          className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                        >
+                          <Pencil className="h-3 w-3" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -342,6 +369,12 @@ export default function PortfolioPage() {
                         @ {stock.currency === "USD" ? "$" : "₩"}{" "}
                         {stock.unitPrice.toLocaleString()}
                       </p>
+                      {stock.currency === "USD" && (
+                        <p className="text-[10px] font-mono-num text-muted-foreground mt-1">
+                          환율: {stock.exchangeRate?.toLocaleString()} /{" "}
+                          {exchangeRate.toLocaleString()}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </Card>
