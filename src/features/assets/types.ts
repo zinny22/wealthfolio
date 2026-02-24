@@ -74,3 +74,36 @@ export interface AssetAllocation {
   value: number;
   color: string;
 }
+
+export type TransactionType = "수입" | "지출" | "이체";
+
+export interface Transaction {
+  id: string;
+  type: TransactionType;
+  date: string; // ISO string
+  amount: number;
+  accountId: string; // 출금 또는 기록 계좌 ID
+  accountName?: string; // 기록 당시 계좌 이름
+  toAccountId?: string; // 이체 시 입금 계좌 ID
+  toAccountName?: string; // 이체 시 입금 계좌 이름
+  category: string;
+  memo: string;
+  currency: Currency;
+  createdAt: any; // Firebase serverTimestamp
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  type: TransactionType;
+  icon?: string; // Optional icon name
+  order: number;
+}
+
+export interface Budget {
+  id: string;
+  month: string; // YYYY-MM
+  amount: number;
+  currency: Currency;
+  updatedAt: any;
+}
