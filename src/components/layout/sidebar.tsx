@@ -136,6 +136,7 @@ function UserProfile() {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
   return (
     <aside className="fixed inset-y-0 left-0 z-50 hidden w-60 flex-col border-r border-border bg-background md:flex">
@@ -151,7 +152,7 @@ export function Sidebar() {
           <ModeToggle />
         </div>
       </div>
-      <NavContent pathname={pathname} />
+      {user && <NavContent pathname={pathname} />}
       <div className="border-t border-border">
         <UserProfile />
       </div>
@@ -161,42 +162,45 @@ export function Sidebar() {
 
 export function MobileHeader() {
   const pathname = usePathname();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b border-border bg-background px-6 md:hidden">
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="-ml-2">
-            <Menu className="h-5 w-5" />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="w-64 p-0">
-          <SheetHeader className="px-6 py-4 border-b border-border text-left">
-            <SheetTitle className="text-left">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-lg font-semibold tracking-tight"
-                onClick={() => setOpen(false)}
-              >
-                <div className="h-6 w-6 rounded-full bg-primary" />
-                Wealthfolio
-              </Link>
-            </SheetTitle>
-          </SheetHeader>
-          <div className="flex flex-col h-full pb-4">
-            <NavContent
-              pathname={pathname}
-              onLinkClick={() => setOpen(false)}
-            />
-            <div className="mt-auto px-6 py-4 border-t border-border flex justify-between items-center">
-              <span className="text-sm font-medium">테마 설정</span>
-              <ModeToggle />
+      {user && (
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="-ml-2">
+              <Menu className="h-5 w-5" />
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0">
+            <SheetHeader className="px-6 py-4 border-b border-border text-left">
+              <SheetTitle className="text-left">
+                <Link
+                  href="/"
+                  className="flex items-center gap-2 text-lg font-semibold tracking-tight"
+                  onClick={() => setOpen(false)}
+                >
+                  <div className="h-6 w-6 rounded-full bg-primary" />
+                  Wealthfolio
+                </Link>
+              </SheetTitle>
+            </SheetHeader>
+            <div className="flex flex-col h-full pb-4">
+              <NavContent
+                pathname={pathname}
+                onLinkClick={() => setOpen(false)}
+              />
+              <div className="mt-auto px-6 py-4 border-t border-border flex justify-between items-center">
+                <span className="text-sm font-medium">테마 설정</span>
+                <ModeToggle />
+              </div>
             </div>
-          </div>
-        </SheetContent>
-      </Sheet>
+          </SheetContent>
+        </Sheet>
+      )}
       <div className="flex flex-1 items-center justify-between">
         <span className="font-semibold text-lg">
           {NAV_ITEMS.find((item) => item.href === pathname)?.label ||
