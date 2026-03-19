@@ -36,6 +36,17 @@
     /* Chart Colors */
     --chart-up: #3182f6;
     --chart-down: #f04452;
+
+    /* Pastel Tones */
+    --income: #4ade80; /* Pastel Green */
+    --expense: #fb7185; /* Pastel Rose */
+    --budget: #60a5fa; /* Pastel Blue */
+    
+    --pastel-blue-bg: #e0f2fe;
+    --pastel-pink-bg: #fce7f3;
+    --pastel-yellow-bg: #fef3c7;
+    --pastel-purple-bg: #f3e8ff;
+    --pastel-green-bg: #dcfce7;
   }
 
   .dark {
@@ -85,8 +96,17 @@
   --radius-md: calc(var(--radius) - 8px);
   --radius-sm: calc(var(--radius) - 16px);
 
-  --color-chart-up: var(--chart-up);
   --color-chart-down: var(--chart-down);
+
+  --color-income: var(--income);
+  --color-expense: var(--expense);
+  --color-budget: var(--budget);
+
+  --color-pastel-blue: var(--pastel-blue-bg);
+  --color-pastel-pink: var(--pastel-pink-bg);
+  --color-pastel-yellow: var(--pastel-yellow-bg);
+  --color-pastel-purple: var(--pastel-purple-bg);
+  --color-pastel-green: var(--pastel-green-bg);
 }
 
 body {

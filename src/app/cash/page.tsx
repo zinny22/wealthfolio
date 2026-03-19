@@ -307,98 +307,120 @@ export default function CashPage() {
         onClose={() => setIsCatModalOpen(false)}
       />
 
-      {/* Hero Header: Budget Focus */}
-      <section className="bg-white p-8 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-none relative overflow-hidden">
-        <div className="relative z-10 flex flex-col md:flex-row justify-between gap-8">
-          <div className="space-y-4 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider">
-                이번 달 소비 현황
+      {/* Hero Header: Toss Style 2.0 Redesign (Flat & High Density) */}
+      <section className="-mx-5 -mt-2 bg-white px-6 pb-12">
+        <div className="flex flex-col gap-6">
+          {/* Top Title & Month Selector */}
+          <div className="flex items-center justify-between pt-4">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[13px] font-bold text-[#8b95a1]">
+                이번 달 소비
               </span>
-              <div className="h-1 w-1 rounded-full bg-[#3182f6]" />
-              <span className="text-[11px] font-bold text-[#3182f6]">
-                {selectedMonth.split("-")[1]}월
-              </span>
-            </div>
-
-            <div className="space-y-1">
-              <h2 className="text-3xl md:text-4xl font-bold text-[#191f28] tracking-tight">
-                ₩ {monthStats.expense.toLocaleString()}
-              </h2>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-[#8b95a1]">
-                  남은 예산
-                </span>
-                <span
-                  className={`text-sm font-bold ${budget && budget.amount - monthStats.expense < 0 ? "text-[#f04452]" : "text-[#3182f6]"}`}
-                >
-                  ₩{" "}
-                  {(budget
-                    ? budget.amount - monthStats.expense
-                    : 0
-                  ).toLocaleString()}
+              <div className="flex items-center bg-[#f2f4f6] rounded-full px-2 py-0.5 ml-1">
+                <span className="text-[11px] font-bold text-[#3182f6] mb-0.5">
+                  {selectedMonth.split("-")[1]}월
                 </span>
               </div>
             </div>
+            <button
+              onClick={() => setIsBudgetEditing(true)}
+              className="text-[11px] font-bold text-[#3182f6] px-3 py-1.5 bg-[#3182f612] rounded-full active:scale-95 transition-all outline-none"
+            >
+              예산 수정
+            </button>
+          </div>
 
-            <div className="pt-4 max-w-md">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-[10px] font-bold text-[#8b95a1]">
-                  예산{" "}
-                  {Math.round(
-                    (monthStats.expense / (budget?.amount || 1)) * 100,
-                  )}
-                  % 사용 중
-                </span>
-                <button
-                  onClick={() => setIsBudgetEditing(true)}
-                  className="text-[10px] font-bold text-[#3182f6] hover:underline"
-                >
-                  예산 설정
-                </button>
-              </div>
-              <div className="w-full h-3 bg-[#f2f4f6] rounded-full overflow-hidden">
-                <div
-                  className={`h-full transition-all duration-700 ${budget && monthStats.expense / budget.amount > 0.9 ? "bg-[#f04452]" : "bg-[#3182f6]"}`}
-                  style={{
-                    width: `${Math.min(100, budget ? (monthStats.expense / budget.amount) * 100 : 0)}%`,
-                  }}
-                />
-              </div>
+          {/* Main Spending Amount */}
+          <div className="space-y-1">
+            <h2 className="text-[40px] font-bold text-[#191f28] tracking-tight leading-tight">
+              ₩{monthStats.expense.toLocaleString()}
+            </h2>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[14px] font-medium text-[#adb5bd]">
+                남은 예산
+              </span>
+              <span
+                className={`text-[14px] font-bold ${budget && budget.amount - monthStats.expense < 0 ? "text-[#f04452]" : "text-[#3e4042]"}`}
+              >
+                ₩
+                {(budget
+                  ? budget.amount - monthStats.expense
+                  : 0
+                ).toLocaleString()}
+              </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 md:w-80">
-            <Card className="p-4 bg-[#f9fafb] border-none shadow-none rounded-2xl">
-              <p className="text-[10px] font-bold text-[#8b95a1] mb-1">
-                총 수익
-              </p>
-              <p className="text-lg font-bold text-[#4caf50]">
+          {/* Compact Budget Progress */}
+          <div className="space-y-2 mt-2">
+            <div className="flex justify-between items-center px-1">
+              <span className="text-[11px] font-bold text-[#8b95a1]">
+                예산{" "}
+                {Math.round((monthStats.expense / (budget?.amount || 1)) * 100)}
+                % 사용 중
+              </span>
+            </div>
+            <div className="w-full h-[6px] bg-[#f2f4f6] rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-700 ${budget && monthStats.expense / budget.amount > 0.9 ? "bg-[#f04452]" : "bg-[#3182f6]"}`}
+                style={{
+                  width: `${Math.min(100, budget ? (monthStats.expense / budget.amount) * 100 : 0)}%`,
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Flat Grid Summary Cards */}
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <div className="p-4 bg-[#f9fafb] rounded-[24px] flex flex-col gap-1.5 border border-[#f2f4f6]">
+              <div className="flex items-center gap-1.5 opacity-60">
+                <ArrowDownLeft
+                  className="h-3 w-3 text-[#4caf50]"
+                  strokeWidth={3}
+                />
+                <span className="text-[11px] font-bold text-[#8b95a1]">
+                  총 수익
+                </span>
+              </div>
+              <p className="text-[16px] font-bold text-[#191f28]">
                 +{monthStats.income.toLocaleString()}
               </p>
-            </Card>
-            <Card className="p-4 bg-[#f9fafb] border-none shadow-none rounded-2xl">
-              <p className="text-[10px] font-bold text-[#8b95a1] mb-1">
-                총 지출
-              </p>
-              <p className="text-lg font-bold text-[#f04452]">
+            </div>
+            <div className="p-4 bg-[#f9fafb] rounded-[24px] flex flex-col gap-1.5 border border-[#f2f4f6]">
+              <div className="flex items-center gap-1.5 opacity-60">
+                <ArrowUpRight
+                  className="h-3 w-3 text-[#f04452]"
+                  strokeWidth={3}
+                />
+                <span className="text-[11px] font-bold text-[#8b95a1]">
+                  총 지출
+                </span>
+              </div>
+              <p className="text-[16px] font-bold text-[#191f28]">
                 -{monthStats.expense.toLocaleString()}
               </p>
-            </Card>
-            <Card className="p-4 bg-[#3182f61a] border-none shadow-none rounded-2xl col-span-2 flex items-center justify-between">
-              <div>
-                <p className="text-[10px] font-bold text-[#3182f6] mb-0.5">
-                  현재 현금 총합
-                </p>
-                <p className="text-lg font-bold text-[#191f28]">
-                  ₩ {totalCash.toLocaleString()}
-                </p>
+            </div>
+            <div className="p-4 bg-[#3182f60a] rounded-[24px] col-span-2 flex items-center justify-between border border-[#3182f612]">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#3182f61a] flex items-center justify-center">
+                  <CreditCard
+                    className="h-5 w-5 text-[#3182f6]"
+                    strokeWidth={2.5}
+                  />
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold text-[#3182f6] opacity-70 block">
+                    보유 현금 총합
+                  </span>
+                  <p className="text-[17px] font-bold text-[#191f28] tracking-tight">
+                    ₩{totalCash.toLocaleString()}
+                  </p>
+                </div>
               </div>
-              <PlusCircle className="h-5 w-5 text-[#3182f6] opacity-50" />
-            </Card>
+              <PlusCircle className="h-5 w-5 text-[#3182f6] opacity-40 hover:opacity-100 transition-opacity cursor-pointer" />
+            </div>
           </div>
         </div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-bl from-[#3182f6]/5 to-transparent rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
       </section>
 
       {/* Tabs Menu */}
@@ -676,44 +698,5 @@ export default function CashPage() {
         </div>
       )}
     </main>
-  );
-}
-
-function SummaryCard({
-  title,
-  amount,
-  color,
-  prefix = "",
-  subText,
-}: {
-  title: string;
-  amount: number;
-  color: string;
-  prefix?: string;
-  subText?: string;
-}) {
-  return (
-    <Card className="p-6 bg-white border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group rounded-3xl">
-      <p className="text-[11px] font-bold text-[#8b95a1] uppercase mb-1 relative z-10">
-        {title}
-      </p>
-      <h3
-        className="text-2xl font-bold tracking-tight font-mono-num relative z-10"
-        style={{ color: color === "#3182f6" ? "#191f28" : color }}
-      >
-        {prefix}₩ {amount.toLocaleString()}
-      </h3>
-      {subText && (
-        <p className="mt-2 text-[11px] font-medium text-[#8b95a1] relative z-10">
-          {subText}
-        </p>
-      )}
-      <div
-        className="absolute top-0 right-0 w-24 h-24 bg-linear-to-br transition-all group-hover:scale-110 opacity-10 pointer-events-none"
-        style={{
-          background: `linear-gradient(to bottom right, ${color}, transparent)`,
-        }}
-      />
-    </Card>
   );
 }

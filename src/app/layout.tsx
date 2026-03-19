@@ -30,7 +30,7 @@ export default function RootLayout({
                 <Sidebar />
                 <MobileHeader />
                 <main className="flex-1 pb-32">
-                  <div className="px-6 py-8">
+                  <div className="px-5 pt-2">
                     {children}
                   </div>
                 </main>
