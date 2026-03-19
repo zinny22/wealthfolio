@@ -9,9 +9,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface DailyDetailListProps {
   date: Date | null;
+  onEdit?: (t: Transaction) => void;
 }
 
-export function DailyDetailList({ date }: DailyDetailListProps) {
+export function DailyDetailList({ date, onEdit }: DailyDetailListProps) {
   const { transactions, categories, selectedCategoryIds } = useTransactionStore();
 
   if (!date) return (
@@ -38,7 +39,7 @@ export function DailyDetailList({ date }: DailyDetailListProps) {
         </span>
       </div>
 
-      <div className="bg-white rounded-[1.5rem] shadow-sm border border-[#f2f4f6] overflow-hidden">
+      <div className="bg-white rounded-3xl shadow-sm border border-[#f2f4f6] overflow-hidden">
         <AnimatePresence mode="popLayout">
           {dailyTransactions.length > 0 ? (
             dailyTransactions.map((t, index) => {
@@ -52,7 +53,9 @@ export function DailyDetailList({ date }: DailyDetailListProps) {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`flex items-center justify-between p-4 px-5 ${
+                  whileTap={{ backgroundColor: "#f9fafb" }}
+                  onClick={() => onEdit?.(t)}
+                  className={`flex items-center justify-between p-4 px-5 cursor-pointer transition-colors ${
                     index !== dailyTransactions.length - 1 ? "border-b border-[#f9fafb]" : ""
                   }`}
                 >

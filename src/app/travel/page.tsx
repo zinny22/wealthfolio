@@ -41,6 +41,7 @@ export default function TravelPage() {
   const { trips, spendings, addTrip, updateTrip, deleteTrip, initializeMockTravelData } = useTravelStore();
   const [activeTab, setActiveTab] = useState<"spending" | "settlement">("spending");
   const [isSpendingModalOpen, setIsSpendingModalOpen] = useState(false);
+  const [selectedSpending, setSelectedSpending] = useState<TravelSpending | null>(null);
   const [isCreateTripModalOpen, setIsCreateTripModalOpen] = useState(false);
 
   useEffect(() => {
@@ -221,7 +222,15 @@ export default function TravelPage() {
                   {items.map((s) => {
                     const payer = selectedTrip?.members.find(m => m.id === s.payerId);
                     return (
-                      <div key={s.id} className="p-4 flex items-center justify-between">
+                      <motion.div 
+                        key={s.id} 
+                        whileTap={{ backgroundColor: "#f9fafb" }}
+                        onClick={() => {
+                          setSelectedSpending(s);
+                          setIsSpendingModalOpen(true);
+                        }}
+                        className="p-4 flex items-center justify-between cursor-pointer transition-colors"
+                      >
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-[#f2f4f6] flex items-center justify-center text-lg shadow-inner">
                             {s.category === '식비' ? '🍜' : s.category === '숙박' ? '🏨' : s.category === '교통' ? '🚌' : '🎒'}
@@ -239,7 +248,7 @@ export default function TravelPage() {
                              <span className="text-[9px] font-bold text-expense bg-expense/10 px-1.5 py-0.5 rounded-md mt-1">정산 제외</span>
                            )}
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>
@@ -333,8 +342,12 @@ export default function TravelPage() {
         {isSpendingModalOpen && selectedTrip && (
           <TravelSpendingModal
             isOpen={isSpendingModalOpen}
-            onClose={() => setIsSpendingModalOpen(false)}
+            onClose={() => {
+              setIsSpendingModalOpen(false);
+              setSelectedSpending(null);
+            }}
             trip={selectedTrip}
+            initialData={selectedSpending}
           />
         )}
       </AnimatePresence>

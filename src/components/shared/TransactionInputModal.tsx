@@ -5,16 +5,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Check, ArrowLeft, ArrowRight, Wallet, CreditCard, ChevronDown } from "lucide-react";
 import { useTransactionStore } from "@/store/useTransactionStore";
 import { format } from "date-fns";
-import * as Icons from "lucide-react";
+import { Transaction } from "@/types/transaction";
+import { useEffect } from "react";
 
 interface TransactionInputModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialData?: Transaction | null;
 }
+
+import * as Icons from "lucide-react";
 
 type Step = "amount" | "type_category" | "method_memo";
 
-export function TransactionInputModal({ isOpen, onClose }: TransactionInputModalProps) {
+export function TransactionInputModal({ isOpen, onClose, initialData }: TransactionInputModalProps) {
   const [step, setStep] = useState<Step>("amount");
   const [amountStr, setAmountStr] = useState("0");
   const [type, setType] = useState<"income" | "expense">("expense");
@@ -22,7 +26,25 @@ export function TransactionInputModal({ isOpen, onClose }: TransactionInputModal
   const [method, setMethod] = useState<"card" | "cash">("card");
   const [memo, setMemo] = useState("");
 
-  const { categories, addTransaction } = useTransactionStore();
+  const { categories, addTransaction, updateTransaction } = useTransactionStore();
+
+  useEffect(() => {
+     if (isOpen && initialData) {
+       setAmountStr(initialData.amount.toString());
+       setType(initialData.type);
+       setCategoryId(initialData.categoryId);
+       setMethod(initialData.method);
+       setMemo(initialData.memo || "");
+       setStep("amount"); // 수정 시에도 금액부터 확인
+     } else if (isOpen && !initialData) {
+       setAmountStr("0");
+       setType("expense");
+       setCategoryId("1");
+       setMethod("card");
+       setMemo("");
+       setStep("amount");
+     }
+  }, [isOpen, initialData]);
 
   const handleNumberClick = (num: string) => {
     setAmountStr((prev) => {
@@ -50,14 +72,21 @@ export function TransactionInputModal({ isOpen, onClose }: TransactionInputModal
   };
 
   const handleSave = () => {
-    addTransaction({
+    const data = {
       amount: parseInt(amountStr),
       type,
       categoryId,
       method,
       memo,
-      date: format(new Date(), "yyyy-MM-dd"),
-    });
+      date: initialData?.date || format(new Date(), "yyyy-MM-dd"),
+    };
+
+    if (initialData) {
+      updateTransaction(initialData.id, data);
+    } else {
+      addTransaction(data);
+    }
+
     onClose();
     // Reset
     setStep("amount");
@@ -73,14 +102,14 @@ export function TransactionInputModal({ isOpen, onClose }: TransactionInputModal
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-end justify-center"
+        className="fixed inset-0 z-100 bg-black/40 backdrop-blur-sm flex items-end justify-center"
       >
         <motion.div
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          className="w-full max-w-[600px] bg-white rounded-t-[3rem] shadow-2xl p-8 flex flex-col h-[85vh] outline-none"
+          className="w-full max-w-[600px] bg-white rounded-t-5xl shadow-2xl p-8 flex flex-col h-[85vh] outline-none"
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
@@ -177,7 +206,7 @@ export function TransactionInputModal({ isOpen, onClose }: TransactionInputModal
                   <div className="flex gap-4">
                     <button
                       onClick={() => setMethod("card")}
-                      className={`flex-1 flex items-center justify-center gap-3 p-5 rounded-[2rem] border-2 transition-all ${
+                      className={`flex-1 flex items-center justify-center gap-3 p-5 rounded-4xl border-2 transition-all ${
                         method === "card" ? "border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10" : "border-[#f2f4f6]"
                       }`}
                     >
@@ -186,7 +215,7 @@ export function TransactionInputModal({ isOpen, onClose }: TransactionInputModal
                     </button>
                     <button
                       onClick={() => setMethod("cash")}
-                      className={`flex-1 flex items-center justify-center gap-3 p-5 rounded-[2rem] border-2 transition-all ${
+                      className={`flex-1 flex items-center justify-center gap-3 p-5 rounded-4xl border-2 transition-all ${
                         method === "cash" ? "border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10" : "border-[#f2f4f6]"
                       }`}
                     >
@@ -202,7 +231,7 @@ export function TransactionInputModal({ isOpen, onClose }: TransactionInputModal
                     value={memo}
                     onChange={(e) => setMemo(e.target.value)}
                     placeholder="지메모를 입력하세요..."
-                    className="w-full p-6 bg-[#f2f4f6] rounded-[2rem] text-base font-bold text-[#191f28] placeholder:text-[#adb5bd] border-none focus:ring-2 focus:ring-primary/20 h-32 resize-none"
+                    className="w-full p-6 bg-[#f2f4f6] rounded-4xl text-base font-bold text-[#191f28] placeholder:text-[#adb5bd] border-none focus:ring-2 focus:ring-primary/20 h-32 resize-none"
                   />
                 </div>
               </div>
@@ -215,7 +244,7 @@ export function TransactionInputModal({ isOpen, onClose }: TransactionInputModal
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 onClick={handleSave}
-                className="w-full py-5 bg-primary text-white rounded-[2rem] font-black text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3"
+                className="w-full py-5 bg-primary text-white rounded-4xl font-black text-lg shadow-xl shadow-primary/20 flex items-center justify-center gap-3"
               >
                 <Check size={22} strokeWidth={3} />
                 저장하기
@@ -225,7 +254,7 @@ export function TransactionInputModal({ isOpen, onClose }: TransactionInputModal
                 whileTap={{ scale: 0.98 }}
                 disabled={amountStr === "0" && step === "amount"}
                 onClick={handleNext}
-                className="w-full py-5 bg-[#191f28] text-white rounded-[2rem] font-black text-lg disabled:opacity-30 flex items-center justify-center gap-3 group"
+                className="w-full py-5 bg-[#191f28] text-white rounded-4xl font-black text-lg disabled:opacity-30 flex items-center justify-center gap-3 group"
               >
                 다음단계
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />

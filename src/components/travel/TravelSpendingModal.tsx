@@ -11,6 +11,7 @@ interface Props {
   isOpen: boolean;
   onClose: () => void;
   trip: TravelTrip;
+  initialData?: TravelSpending | null;
 }
 
 const CURRENCIES: { label: string; value: TravelCurrency; symbol: string; rate: number }[] = [
@@ -21,8 +22,8 @@ const CURRENCIES: { label: string; value: TravelCurrency; symbol: string; rate: 
   { label: "동", value: "VND", symbol: "₫", rate: 0.054 },
 ];
 
-export function TravelSpendingModal({ isOpen, onClose, trip }: Props) {
-  const { addSpending } = useTravelStore();
+export function TravelSpendingModal({ isOpen, onClose, trip, initialData }: Props) {
+  const { addSpending, updateSpending } = useTravelStore();
   
   const [amountLocal, setAmountLocal] = useState("");
   const [localCurrency, setLocalCurrency] = useState<TravelCurrency>("KRW");
@@ -31,6 +32,26 @@ export function TravelSpendingModal({ isOpen, onClose, trip }: Props) {
   const [memo, setMemo] = useState("");
   const [category, setCategory] = useState("식비");
   const [isExcluded, setIsExcluded] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && initialData) {
+      setAmountLocal(initialData.amountLocal.toString());
+      setLocalCurrency(initialData.localCurrency);
+      setPayerId(initialData.payerId);
+      setSplitMemberIds(initialData.splitMemberIds);
+      setMemo(initialData.memo);
+      setCategory(initialData.category);
+      setIsExcluded(initialData.isExcludedFromSettlement);
+    } else if (isOpen && !initialData) {
+      setAmountLocal("");
+      setLocalCurrency(trip.baseCurrency === 'VND' ? 'VND' : (trip.emoji === '🇯🇵' ? 'JPY' : 'KRW'));
+      setPayerId(trip.members[0]?.id || "");
+      setSplitMemberIds(trip.members.map(m => m.id));
+      setMemo("");
+      setCategory("식비");
+      setIsExcluded(false);
+    }
+  }, [isOpen, initialData, trip]);
 
   const exchangeRate = useMemo(() => 
     CURRENCIES.find(c => c.value === localCurrency)?.rate || 1,
@@ -45,9 +66,9 @@ export function TravelSpendingModal({ isOpen, onClose, trip }: Props) {
   const handleSave = () => {
     if (!amountLocal) return;
     
-    addSpending({
+    const spendingData = {
       tripId: trip.id,
-      date: new Date().toISOString().split('T')[0],
+      date: initialData?.date || new Date().toISOString().split('T')[0],
       amountKrw,
       amountLocal: parseFloat(amountLocal),
       localCurrency,
@@ -57,7 +78,13 @@ export function TravelSpendingModal({ isOpen, onClose, trip }: Props) {
       memo: memo || category,
       splitMemberIds,
       isExcludedFromSettlement: isExcluded
-    });
+    };
+
+    if (initialData) {
+      updateSpending(initialData.id, spendingData);
+    } else {
+      addSpending(spendingData);
+    }
     
     // Reset & Close
     setAmountLocal("");

@@ -9,21 +9,34 @@ import { TransactionInputModal } from "@/components/shared/TransactionInputModal
 import { useTransactionStore } from "@/store/useTransactionStore";
 import { motion } from "framer-motion";
 
+import { Transaction } from "@/types/transaction";
+
 export default function HomePage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [isInputModalOpen, setIsInputModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [viewMode, setViewMode] = useState<"month" | "week" | "day">("month");
   const { initializeMockData, transactions } = useTransactionStore();
 
   useEffect(() => {
-    // 초기 데이터가 없을 경우에만 목 데이터 생성
     if (transactions.length === 0) {
       initializeMockData();
     }
   }, []);
 
   const handleAddClick = () => {
+    setSelectedTransaction(null);
     setIsInputModalOpen(true);
+  };
+
+  const handleEditClick = (t: Transaction) => {
+    setSelectedTransaction(t);
+    setIsInputModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsInputModalOpen(false);
+    setSelectedTransaction(null);
   };
 
   return (
@@ -65,7 +78,10 @@ export default function HomePage() {
       />
 
       {/* 하단 상세 내역 */}
-      <DailyDetailList date={selectedDate} />
+      <DailyDetailList 
+        date={selectedDate} 
+        onEdit={handleEditClick}
+      />
 
       {/* 플로팅 버튼 */}
       <FloatingActionButton onClick={handleAddClick} />
@@ -73,7 +89,8 @@ export default function HomePage() {
       {/* 입력 모달 */}
       <TransactionInputModal 
         isOpen={isInputModalOpen} 
-        onClose={() => setIsInputModalOpen(false)} 
+        onClose={handleModalClose} 
+        initialData={selectedTransaction}
       />
     </motion.div>
   );
