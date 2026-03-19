@@ -19,20 +19,20 @@ export function AssetAllocationChart({
   grandTotal,
 }: AssetAllocationChartProps) {
   const data = [
-    { name: "Stocks", value: stockTotal, color: "#10b981" }, // emerald-500
-    { name: "Cash", value: cashTotal, color: "#3b82f6" }, // blue-500
-    { name: "Savings", value: savingsTotal, color: "#8b5cf6" }, // violet-500
-    { name: "Insurance", value: insuranceTotal, color: "#f97316" }, // orange-500
+    { name: "주식", value: stockTotal, color: "#10b981" }, // emerald-500
+    { name: "현금", value: cashTotal, color: "#3b82f6" }, // blue-500
+    { name: "예적금", value: savingsTotal, color: "#8b5cf6" }, // violet-500
+    { name: "보험", value: insuranceTotal, color: "#f97316" }, // orange-500
   ].filter((item) => item.value > 0);
 
   if (grandTotal === 0) {
     return (
       <Card className="h-full">
         <CardHeader>
-          <CardTitle>Asset Allocation</CardTitle>
+          <CardTitle>자산 구성</CardTitle>
         </CardHeader>
         <CardContent className="flex h-[300px] items-center justify-center text-muted-foreground">
-          No assets data available
+          자산 데이터가 없습니다.
         </CardContent>
       </Card>
     );
@@ -41,7 +41,7 @@ export function AssetAllocationChart({
   return (
     <Card className="h-full flex flex-col">
       <CardHeader className="pb-0">
-        <CardTitle>Asset Allocation</CardTitle>
+        <CardTitle>자산 구성</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">

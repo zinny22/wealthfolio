@@ -51,12 +51,12 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Cash Account">
+    <Modal isOpen={isOpen} onClose={onClose} title="현금 계좌 추가">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Bank Name
+              금융사/은행명
             </label>
             <Input
               required
@@ -64,12 +64,12 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
               onChange={(e) =>
                 setFormData({ ...formData, bankName: e.target.value })
               }
-              placeholder="e.g. Shinhan"
+              placeholder="예: 신한은행"
             />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Account Name
+              계좌 별칭
             </label>
             <Input
               required
@@ -77,7 +77,7 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
               onChange={(e) =>
                 setFormData({ ...formData, accountName: e.target.value })
               }
-              placeholder="e.g. Main Account"
+              placeholder="예: 주거래 계좌"
             />
           </div>
         </div>
@@ -85,7 +85,7 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Balance
+              잔액
             </label>
             <Input
               type="number"
@@ -98,7 +98,7 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Currency
+              통화
             </label>
             <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -120,10 +120,10 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
             onClick={onClose}
             disabled={loading}
           >
-            Cancel
+            취소
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Adding..." : "Add Account"}
+            {loading ? "추가 중..." : "계좌 추가"}
           </Button>
         </div>
       </form>

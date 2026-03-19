@@ -81,7 +81,7 @@ function UserProfile() {
     }
   };
 
-  if (loading) return <div className="p-4 text-xs text-center">Loading...</div>;
+  if (loading) return <div className="p-4 text-xs text-center italic text-muted-foreground animate-pulse">로딩 중...</div>;
 
   if (!user) {
     return (
@@ -172,7 +172,7 @@ export function MobileHeader() {
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="-ml-2">
               <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle menu</span>
+              <span className="sr-only">메뉴 열기</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-64 p-0">

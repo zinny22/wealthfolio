@@ -127,13 +127,13 @@ export function AddStockModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={initialData ? "Edit Stock" : "Add New Stock"}
+      title={initialData ? "종목 수정" : "신규 종목 추가"}
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Date
+              날짜
             </label>
             <Input
               type="date"
@@ -146,7 +146,7 @@ export function AddStockModal({
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Broker
+              증권사
             </label>
             <Input
               required
@@ -154,7 +154,7 @@ export function AddStockModal({
               onChange={(e) =>
                 setFormData({ ...formData, broker: e.target.value })
               }
-              placeholder="e.g. Kiwoom"
+              placeholder="예: 키움증권"
             />
           </div>
         </div>
@@ -162,7 +162,7 @@ export function AddStockModal({
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Name
+              종목명
             </label>
             <Input
               required
@@ -170,12 +170,12 @@ export function AddStockModal({
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-              placeholder="e.g. Apple"
+              placeholder="예: 애플"
             />
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Code
+              종목코드
             </label>
             <Input
               required
@@ -183,7 +183,7 @@ export function AddStockModal({
               onChange={(e) =>
                 setFormData({ ...formData, code: e.target.value })
               }
-              placeholder="e.g. AAPL"
+              placeholder="예: AAPL"
             />
           </div>
         </div>
@@ -191,7 +191,7 @@ export function AddStockModal({
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Qty
+              수량
             </label>
             <Input
               type="number"
@@ -204,7 +204,7 @@ export function AddStockModal({
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Price
+              가격
             </label>
             <Input
               type="number"
@@ -218,7 +218,7 @@ export function AddStockModal({
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Currency
+              통화
             </label>
             <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -236,7 +236,7 @@ export function AddStockModal({
         {formData.currency === "USD" && (
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Exchange Rate (Buying)
+              매수 당시 환율
             </label>
             <Input
               type="number"
@@ -260,10 +260,10 @@ export function AddStockModal({
             onClick={onClose}
             disabled={loading}
           >
-            Cancel
+            취소
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Saving..." : initialData ? "Update Stock" : "Add Stock"}
+            {loading ? "저장 중..." : initialData ? "종목 업데이트" : "종목 추가"}
           </Button>
         </div>
       </form>

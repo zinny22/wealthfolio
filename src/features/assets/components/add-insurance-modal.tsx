@@ -59,12 +59,12 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Insurance">
+    <Modal isOpen={isOpen} onClose={onClose} title="보험/연금 추가">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Company
+              보험사
             </label>
             <Input
               required
@@ -76,7 +76,7 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Description
+              설명
             </label>
             <Input
               required
@@ -91,7 +91,7 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Join Date
+              가입일
             </label>
             <Input
               type="date"
@@ -104,7 +104,7 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              End Date
+              종료일
             </label>
             <Input
               type="date"
@@ -119,7 +119,7 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Monthly Pay
+              월 납입액
             </label>
             <Input
               type="number"
@@ -135,7 +135,7 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Total Paid
+              총 납입액
             </label>
             <Input
               type="number"
@@ -151,7 +151,7 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Payout (Est)
+              예상 수령액
             </label>
             <Input
               type="number"
@@ -170,10 +170,10 @@ export function AddInsuranceModal({ isOpen, onClose }: AddInsuranceModalProps) {
             onClick={onClose}
             disabled={loading}
           >
-            Cancel
+            취소
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Adding..." : "Add Insurance"}
+            {loading ? "추가 중..." : "추가하기"}
           </Button>
         </div>
       </form>

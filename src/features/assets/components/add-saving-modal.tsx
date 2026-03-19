@@ -78,12 +78,12 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Savings/Deposit">
+    <Modal isOpen={isOpen} onClose={onClose} title="예적금 추가">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Type
+              분류
             </label>
             <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
@@ -92,13 +92,13 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
                 setFormData({ ...formData, type: e.target.value })
               }
             >
-              <option value="예금">예금 (Deposit)</option>
-              <option value="적금">적금 (Savings)</option>
+              <option value="예금">예금</option>
+              <option value="적금">적금</option>
             </select>
           </div>
           <div className="col-span-2">
             <label className="text-xs font-medium text-muted-foreground">
-              Bank Name
+              은행명
             </label>
             <Input
               required
@@ -113,7 +113,7 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Join Date
+              가입일
             </label>
             <Input
               type="date"
@@ -126,7 +126,7 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Maturity Date
+              만기일
             </label>
             <Input
               type="date"
@@ -142,7 +142,7 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Amount
+              금액
             </label>
             <Input
               type="number"
@@ -155,7 +155,7 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Rate (%)
+              이율 (%)
             </label>
             <Input
               type="number"
@@ -172,7 +172,7 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">
-              Period (Mo)
+              기간 (개월)
             </label>
             <Input
               type="number"
@@ -199,7 +199,7 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
             htmlFor="isTaxFree"
             className="text-sm font-medium text-foreground"
           >
-            Tax Free (비과세)
+            비과세
           </label>
         </div>
 
@@ -210,10 +210,10 @@ export function AddSavingModal({ isOpen, onClose }: AddSavingModalProps) {
             onClick={onClose}
             disabled={loading}
           >
-            Cancel
+            취소
           </Button>
           <Button type="submit" disabled={loading}>
-            {loading ? "Adding..." : "Add Savings"}
+            {loading ? "추가 중..." : "저장하기"}
           </Button>
         </div>
       </form>

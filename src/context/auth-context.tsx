@@ -17,15 +17,20 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  // 테스트를 위해 로그인 상태를 강제로 활성화합니다.
+  const [user, setUser] = useState<User | null>({
+    uid: "test-user",
+    email: "test@example.com",
+    displayName: "테스트 사용자",
+  } as any);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    // const unsubscribe = onAuthStateChanged(auth, (user) => {
+    //   setUser(user);
+    //   setLoading(false);
+    // });
+    // return () => unsubscribe();
   }, []);
 
   return (

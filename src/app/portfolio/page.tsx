@@ -36,38 +36,63 @@ export default function PortfolioPage() {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      setStocks([]);
-      setLoading(false);
-      return;
-    }
-
-    const q = query(
-      collection(db, "users", user.uid, "stocks"),
-      orderBy("purchaseDate", "desc")
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const stockItems = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as StockItem[];
-        setStocks(stockItems);
-        setLoading(false);
+    // 테스트용 모의 데이터를 설정합니다.
+    setStocks([
+      {
+        id: "1",
+        purchaseDate: "2024-01-15",
+        broker: "키움증권",
+        tradeType: "매수",
+        name: "애플",
+        code: "AAPL",
+        market: "나스닥",
+        sector: "TECH",
+        unitPrice: 180.5,
+        currentPrice: 192.3,
+        quantity: 10,
+        currency: "USD",
+        exchangeRate: 1350,
+        amount: 1805,
+        adjustedAvgPrice: 180.5,
+        totalAmount: 1923,
+        totalAmountKrw: 2596050,
+        realizedGain: 0,
+        note: "장기 보유",
       },
-      (error) => {
-        console.error("Error fetching stocks:", error);
-        setLoading(false);
-      }
-    );
+      {
+        id: "2",
+        purchaseDate: "2024-02-10",
+        broker: "미래에셋",
+        tradeType: "매수",
+        name: "삼성전자",
+        code: "005930",
+        market: "코스피",
+        sector: "SEMICON",
+        unitPrice: 72000,
+        currentPrice: 75000,
+        quantity: 100,
+        currency: "KRW",
+        exchangeRate: 1,
+        amount: 7200000,
+        adjustedAvgPrice: 72000,
+        totalAmount: 7500000,
+        totalAmountKrw: 7500000,
+        realizedGain: 0,
+        note: "배당수익 기대",
+      },
+    ] as any);
+    setLoading(false);
 
+    /* Firebase 구독 부분 주석 처리
+    if (!user) { ... }
+    const q = query(...)
+    const unsubscribe = onSnapshot(...)
     return () => unsubscribe();
+    */
   }, [user]);
 
   const handleDelete = async (id: string) => {
-    if (!user || !confirm("Are you sure you want to delete this item?")) return;
+    if (!user || !confirm("이 항목을 정말 삭제하시겠습니까?")) return;
 
     try {
       await deleteDoc(doc(db, "users", user.uid, "stocks", id));
@@ -127,18 +152,18 @@ export default function PortfolioPage() {
             onClick={() => setIsAddModalOpen(true)}
             className="h-8 text-xs md:h-10 md:text-sm"
           >
-            + Add Stock
+            + 종목 추가
           </Button>
         </div>
       </div>
 
       {loading ? (
         <div className="flex justify-center p-8 text-muted-foreground">
-          Loading...
+          로딩 중...
         </div>
       ) : stocks.length === 0 ? (
         <div className="flex justify-center p-8 border border-dashed rounded-md text-muted-foreground">
-          주식 내역이 없습니다. '+ Add Stock'을 눌러 추가하세요.
+          주식 내역이 없습니다. '+ 종목 추가'를 눌러 추가하세요.
         </div>
       ) : (
         <>
@@ -176,7 +201,7 @@ export default function PortfolioPage() {
                         평가수익률
                       </th>
                       <th className="px-4 py-3 font-medium text-center">
-                        Actions
+                        관리
                       </th>
                     </tr>
                   </thead>

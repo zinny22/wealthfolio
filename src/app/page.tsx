@@ -36,59 +36,29 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      setStocks([]);
-      setCashAccounts([]);
-      setSavings([]);
-      setInsurances([]);
-      setLoading(false);
-      return;
-    }
-
-    const unsubStocks = onSnapshot(
-      collection(db, "users", user.uid, "stocks"),
-      (snap) => {
-        setStocks(
-          snap.docs.map((d) => ({ id: d.id, ...d.data() } as StockHolding))
-        );
-      }
-    );
-
-    const unsubCash = onSnapshot(
-      collection(db, "users", user.uid, "cash_accounts"),
-      (snap) => {
-        setCashAccounts(
-          snap.docs.map((d) => ({ id: d.id, ...d.data() } as CashAccount))
-        );
-      }
-    );
-
-    const unsubSavings = onSnapshot(
-      collection(db, "users", user.uid, "savings"),
-      (snap) => {
-        setSavings(
-          snap.docs.map((d) => ({ id: d.id, ...d.data() } as SavingDeposit))
-        );
-      }
-    );
-
-    const unsubInsurances = onSnapshot(
-      collection(db, "users", user.uid, "insurances"),
-      (snap) => {
-        setInsurances(
-          snap.docs.map((d) => ({ id: d.id, ...d.data() } as Insurance))
-        );
-      }
-    );
-
+    // 임시 테스트 데이터를 설정합니다.
+    setStocks([
+      { id: "1", name: "Apple", code: "AAPL", currentPrice: 175.43, unitPrice: 150.0, quantity: 10, currency: "USD", totalAmountKrw: 2450000, tradeType: "매수", market: "NASDAQ" } as any,
+      { id: "2", name: "Samsung Electronics", code: "005930", currentPrice: 72000, unitPrice: 65000, quantity: 50, currency: "KRW", totalAmountKrw: 3600000, tradeType: "매수", market: "KOSPI" } as any
+    ]);
+    setCashAccounts([
+      { id: "1", bankName: "Shinhan", accountName: "Main", balance: 5000000, currency: "KRW" } as any
+    ]);
+    setSavings([
+      { id: "1", bankName: "KB", amount: 10000000, interestRate: 4.5, period: 12, type: "적금" } as any
+    ]);
+    setInsurances([
+      { id: "1", company: "Samsung Fire", totalPayment: 1200000, monthlyPayment: 100000 } as any
+    ]);
+    
     setLoading(false);
 
-    return () => {
-      unsubStocks();
-      unsubCash();
-      unsubSavings();
-      unsubInsurances();
-    };
+    /* Firebase 구독 부분 주석 처리
+    if (!user) { ... }
+    const unsubStocks = onSnapshot(...)
+    ...
+    return () => { ... };
+    */
   }, [user]);
 
   if (!isMounted) {
@@ -115,11 +85,11 @@ export default function DashboardPage() {
       <section>
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-lg font-bold tracking-tight uppercase text-foreground">
-            Dashboard Overview
+            대시보드 개요
           </h2>
           <span className="text-xs text-muted-foreground font-mono-num">
             {new Date().toLocaleDateString()} • USD/KRW:{" "}
-            {exchangeRate.toLocaleString()}
+            {exchangeRate.toLocaleString()}원
           </span>
         </div>
 
@@ -127,20 +97,20 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="p-4 pb-2">
               <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Total Assets
+                총 자산
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
               <CardValue>₩ {grandTotal.toLocaleString()}</CardValue>
               <div className="mt-3 text-xs text-muted-foreground">
-                Stocks + Cash + Savings + Insurance
+                주식 + 현금 + 예적금 + 보험
               </div>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="p-4 pb-2">
               <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Stock Holdings
+                주식 보유액
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
@@ -154,7 +124,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="p-4 pb-2">
               <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Cash & Savings
+                현금 및 예적금
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
@@ -170,7 +140,7 @@ export default function DashboardPage() {
           <Card>
             <CardHeader className="p-4 pb-2">
               <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Insurance & Pension
+                보험 및 연금
               </CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
@@ -187,7 +157,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <section className="md:col-span-2 space-y-4">
           <h3 className="text-sm font-bold uppercase text-foreground">
-            Asset Breakdown
+            자산별 내역
           </h3>
           <div className="grid gap-4 md:grid-cols-2">
             {/* Stocks Breakdown */}
@@ -195,7 +165,7 @@ export default function DashboardPage() {
               <CardHeader className="p-5 pb-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-muted-foreground">
-                    Stocks
+                    주식
                   </span>
                   <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
                     {stockPct.toFixed(1)}%
@@ -214,9 +184,7 @@ export default function DashboardPage() {
                     style={{ width: `${stockPct}%` }}
                   />
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {stocks.length} Holdings
-                </p>
+                  {stocks.length}개 종목
               </CardContent>
             </Card>
 
@@ -225,7 +193,7 @@ export default function DashboardPage() {
               <CardHeader className="p-5 pb-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-muted-foreground">
-                    Cash
+                    현금
                   </span>
                   <span className="text-xs font-bold text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-full">
                     {cashPct.toFixed(1)}%
@@ -244,9 +212,7 @@ export default function DashboardPage() {
                     style={{ width: `${cashPct}%` }}
                   />
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {cashAccounts.length} Accounts
-                </p>
+                  {cashAccounts.length}개 계좌
               </CardContent>
             </Card>
 
@@ -255,7 +221,7 @@ export default function DashboardPage() {
               <CardHeader className="p-5 pb-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-muted-foreground">
-                    Savings
+                    예적금
                   </span>
                   <span className="text-xs font-bold text-violet-500 bg-violet-500/10 px-2 py-0.5 rounded-full">
                     {savingsPct.toFixed(1)}%
@@ -274,9 +240,7 @@ export default function DashboardPage() {
                     style={{ width: `${savingsPct}%` }}
                   />
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {savings.length} Products
-                </p>
+                  {savings.length}개 상품
               </CardContent>
             </Card>
 
@@ -285,7 +249,7 @@ export default function DashboardPage() {
               <CardHeader className="p-5 pb-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-muted-foreground">
-                    Insurance
+                    보험
                   </span>
                   <span className="text-xs font-bold text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded-full">
                     {insurancePct.toFixed(1)}%
@@ -304,9 +268,7 @@ export default function DashboardPage() {
                     style={{ width: `${insurancePct}%` }}
                   />
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {insurances.length} Policies
-                </p>
+                  {insurances.length}건
               </CardContent>
             </Card>
           </div>

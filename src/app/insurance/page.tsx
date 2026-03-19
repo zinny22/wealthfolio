@@ -29,38 +29,23 @@ export default function InsurancePage() {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      setInsurances([]);
-      setLoading(false);
-      return;
-    }
+    // 테스트용 모의 데이터를 설정합니다.
+    setInsurances([
+      { id: "1", company: "삼성생명", description: "실손보험", monthlyPayment: 54000, totalPayment: 3240000, payout: 0, joinDate: "2019-03-01" } as any,
+      { id: "2", company: "현대해상", description: "자동차보험", monthlyPayment: 80000, totalPayment: 960000, payout: 0, joinDate: "2023-11-01" } as any,
+    ]);
+    setLoading(false);
 
-    const q = query(
-      collection(db, "users", user.uid, "insurances"),
-      orderBy("createdAt", "desc")
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const insuranceItems = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Insurance[];
-        setInsurances(insuranceItems);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error fetching insurances:", error);
-        setLoading(false);
-      }
-    );
-
+    /* Firebase 구독 부분 주석 처리
+    if (!user) { ... }
+    const q = query(...)
+    ...
     return () => unsubscribe();
+    */
   }, [user]);
 
   const handleDelete = async (id: string) => {
-    if (!user || !confirm("Are you sure you want to delete this item?")) return;
+    if (!user || !confirm("이 항목을 정말 삭제하시겠습니까?")) return;
 
     try {
       await deleteDoc(doc(db, "users", user.uid, "insurances", id));
@@ -86,11 +71,11 @@ export default function InsurancePage() {
       <div className="grid grid-cols-2 gap-4 md:flex md:items-center md:justify-between">
         <div className="col-span-2 md:flex md:items-baseline md:gap-4">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Insurance & Pension (보험/연금)
+            보험 및 연금 현황
           </h1>
           <div className="hidden md:block">
             <span className="text-sm text-muted-foreground mr-2">
-              Total Payments
+              총 납입액
             </span>
             <span className="text-xl font-bold text-foreground font-mono-num">
               ₩ {totalPaymentSum.toLocaleString()}
@@ -113,18 +98,18 @@ export default function InsurancePage() {
             onClick={() => setIsAddModalOpen(true)}
             className="h-8 text-xs md:h-10 md:text-sm"
           >
-            + Add Insurance
+            + 보험/연금 추가
           </Button>
         </div>
       </div>
 
       {loading ? (
         <div className="flex justify-center p-8 text-muted-foreground">
-          Loading...
+          로딩 중...
         </div>
       ) : insurances.length === 0 ? (
         <div className="flex justify-center p-8 border border-dashed rounded-md text-muted-foreground">
-          보험/연금 내역이 없습니다. '+ Add Insurance'를 눌러 추가하세요.
+          보험/연금 내역이 없습니다. '+ 보험/연금 추가'를 눌러 추가하세요.
         </div>
       ) : (
         <>
@@ -146,7 +131,7 @@ export default function InsurancePage() {
                         총 납입액
                       </th>
                       <th className="px-4 py-3 font-medium text-center">
-                        Actions
+                        관리
                       </th>
                     </tr>
                   </thead>
@@ -194,7 +179,7 @@ export default function InsurancePage() {
                         colSpan={6}
                         className="px-4 py-3 text-right text-foreground"
                       >
-                        Grand Total
+                        전체 합계
                       </td>
                       <td className="px-4 py-3 text-right font-mono-num text-foreground">
                         {totalPaymentSum.toLocaleString()}

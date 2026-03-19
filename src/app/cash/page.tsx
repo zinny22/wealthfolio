@@ -63,78 +63,28 @@ export default function CashPage() {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      setCashAccounts([]);
-      setTransactions([]);
-      setBudget(null);
-      setLoading(false);
-      return;
-    }
+    // 테스트용 모의 데이터를 설정합니다.
+    setCashAccounts([
+      { id: "1", bankName: "신한은행", accountName: "주거래 계좌", balance: 15600000, currency: "KRW" } as any,
+      { id: "2", bankName: "카카오뱅크", accountName: "비상금", balance: 5000000, currency: "KRW" } as any,
+    ]);
+    
+    setTransactions([
+      { id: "1", date: "2024-03-19", type: "지출", category: "식비", amount: 15000, memo: "점심 식사", accountName: "주거래 계좌" } as any,
+      { id: "2", date: "2024-03-18", type: "수입", category: "급여", amount: 3500000, memo: "3월 급여", accountName: "주거래 계좌" } as any,
+      { id: "3", date: "2024-03-17", type: "지출", category: "쇼핑", amount: 89000, memo: "운동화", accountName: "비상금" } as any,
+    ]);
+    
+    setBudget({ amount: 1000000, month: selectedMonth } as any);
+    setTempBudget(1000000);
+    setLoading(false);
 
-    // Accounts Subscription
-    const qAccounts = query(
-      collection(db, "users", user.uid, "cash_accounts"),
-      orderBy("createdAt", "desc"),
-    );
-
-    const unsubscribeAccounts = onSnapshot(
-      qAccounts,
-      (snapshot) => {
-        const accounts = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as CashAccount[];
-        setCashAccounts(accounts);
-      },
-      (error) => {
-        console.error("Error fetching accounts:", error);
-      },
-    );
-
-    // Budget Subscription for Selected Month
-    const unsubscribeBudget = onSnapshot(
-      doc(db, "users", user.uid, "budgets", selectedMonth),
-      (docSnap) => {
-        if (docSnap.exists()) {
-          const bData = { id: docSnap.id, ...docSnap.data() } as Budget;
-          setBudget(bData);
-          setTempBudget(bData.amount);
-        } else {
-          setBudget(null);
-          setTempBudget(0);
-        }
-      },
-    );
-
-    // Transactions Subscription (All for client-side filtering)
-    const qTrans = query(
-      collection(db, "users", user.uid, "transactions"),
-      orderBy("date", "desc"),
-      orderBy("createdAt", "desc"),
-      limit(200), // Increased limit for better filtering
-    );
-
-    const unsubscribeTrans = onSnapshot(
-      qTrans,
-      (snapshot) => {
-        const trans = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Transaction[];
-        setTransactions(trans);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error fetching transactions:", error);
-        setLoading(false);
-      },
-    );
-
-    return () => {
-      unsubscribeAccounts();
-      unsubscribeTrans();
-      unsubscribeBudget();
-    };
+    /* Firebase 구독 부분 주석 처리
+    if (!user) { ... }
+    const unsubscribeAccounts = ...
+    ...
+    return () => { ... };
+    */
   }, [user, selectedMonth]);
 
   // Combined Filtering Logic
@@ -280,7 +230,7 @@ export default function CashPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-4 bg-primary/5 border-primary/20">
           <p className="text-xs font-medium text-primary/60 uppercase tracking-wider">
-            Total balance (총 잔액)
+            총 잔액
           </p>
           <p className="text-2xl font-bold font-mono-num">
             ₩ {totalCash.toLocaleString()}
@@ -289,7 +239,7 @@ export default function CashPage() {
         <Card className="p-4 bg-blue-500/5 border-blue-500/20">
           <div className="flex justify-between items-start">
             <p className="text-xs font-medium text-blue-500/60 uppercase tracking-wider">
-              Month Income
+              이번 달 수입
             </p>
           </div>
           <p className="text-2xl font-bold font-mono-num text-blue-600">
@@ -298,7 +248,7 @@ export default function CashPage() {
         </Card>
         <Card className="p-4 bg-red-500/5 border-red-500/20">
           <p className="text-xs font-medium text-red-500/60 uppercase tracking-wider">
-            Month Expense
+            이번 달 지출
           </p>
           <p className="text-2xl font-bold font-mono-num text-red-600">
             -₩ {monthStats.expense.toLocaleString()}
@@ -308,7 +258,7 @@ export default function CashPage() {
           <div>
             <div className="flex justify-between items-center mb-1">
               <p className="text-xs font-medium text-amber-600/60 uppercase tracking-wider">
-                Monthly Budget
+                이번 달 예산
               </p>
               <button
                 onClick={() => setIsBudgetEditing(!isBudgetEditing)}

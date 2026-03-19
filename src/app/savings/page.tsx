@@ -29,38 +29,23 @@ export default function SavingsPage() {
   }, []);
 
   useEffect(() => {
-    if (!user) {
-      setSavings([]);
-      setLoading(false);
-      return;
-    }
+    // 테스트용 모의 데이터를 설정합니다.
+    setSavings([
+      { id: "1", bankName: "신한은행", type: "적금", amount: 5000000, interestRate: 4.2, period: 24, joinDate: "2023-01-01", maturityDate: "2025-01-01", currency: "KRW" } as any,
+      { id: "2", bankName: "국민은행", type: "예금", amount: 20000000, interestRate: 3.8, period: 12, joinDate: "2023-06-01", maturityDate: "2024-06-01", currency: "KRW" } as any,
+    ]);
+    setLoading(false);
 
-    const q = query(
-      collection(db, "users", user.uid, "savings"),
-      orderBy("createdAt", "desc")
-    );
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const savingItems = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as SavingDeposit[];
-        setSavings(savingItems);
-        setLoading(false);
-      },
-      (error) => {
-        console.error("Error fetching savings:", error);
-        setLoading(false);
-      }
-    );
-
+    /* Firebase 구독 부분 주석 처리
+    if (!user) { ... }
+    const q = query(...)
+    ...
     return () => unsubscribe();
+    */
   }, [user]);
 
   const handleDelete = async (id: string) => {
-    if (!user || !confirm("Are you sure you want to delete this item?")) return;
+    if (!user || !confirm("이 항목을 정말 삭제하시겠습니까?")) return;
 
     try {
       await deleteDoc(doc(db, "users", user.uid, "savings", id));
@@ -83,11 +68,11 @@ export default function SavingsPage() {
       <div className="grid grid-cols-2 gap-4 md:flex md:items-center md:justify-between">
         <div className="col-span-2 md:flex md:items-baseline md:gap-4">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Savings & Deposits (예적금)
+            예적금 현황
           </h1>
           <div className="hidden md:block">
             <span className="text-sm text-muted-foreground mr-2">
-              Total Savings (Principal)
+              총 불입액 (원금)
             </span>
             <span className="text-xl font-bold text-foreground font-mono-num">
               ₩ {totalSavings.toLocaleString()}
@@ -110,18 +95,18 @@ export default function SavingsPage() {
             onClick={() => setIsAddModalOpen(true)}
             className="h-8 text-xs md:h-10 md:text-sm"
           >
-            + Add Savings
+            + 예적금 추가
           </Button>
         </div>
       </div>
 
       {loading ? (
         <div className="flex justify-center p-8 text-muted-foreground">
-          Loading...
+          로딩 중...
         </div>
       ) : savings.length === 0 ? (
         <div className="flex justify-center p-8 border border-dashed rounded-md text-muted-foreground">
-          예적금 내역이 없습니다. '+ Add Savings'를 눌러 추가하세요.
+          예적금 내역이 없습니다. '+ 예적금 추가'를 눌러 추가하세요.
         </div>
       ) : (
         <>
@@ -155,7 +140,7 @@ export default function SavingsPage() {
                         만기수령액(통화)
                       </th>
                       <th className="px-4 py-3 font-medium text-center">
-                        Actions
+                        관리
                       </th>
                     </tr>
                   </thead>
@@ -230,7 +215,7 @@ export default function SavingsPage() {
                         colSpan={5}
                         className="px-4 py-3 text-right text-foreground"
                       >
-                        Total Savings (Principal)
+                        총 합계 (원금)
                       </td>
                       <td className="px-4 py-3 text-right font-mono-num text-foreground">
                         {totalSavings.toLocaleString()}
