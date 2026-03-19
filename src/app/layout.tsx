@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Sidebar, MobileHeader } from "@/components/layout/sidebar";
+import { Sidebar, MobileHeader, MobileBottomNav } from "@/components/layout/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/context/auth-context";
 
@@ -15,24 +15,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className="dark h-full" suppressHydrationWarning>
-      <body className="h-full bg-background text-foreground antialiased selection:bg-primary/30">
+    <html lang="ko" className="h-full" suppressHydrationWarning>
+      <body className="h-full bg-[#f2f4f6] text-foreground antialiased selection:bg-primary/30">
         <AuthProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="light" // 앱 느낌을 위해 기본 테마를 라이트로 고정하거나 설정에 따름
             enableSystem
             disableTransitionOnChange
           >
-            <div className="flex h-full flex-col md:flex-row">
-              <Sidebar />
-              <div className="flex flex-1 flex-col md:ml-60">
+            <div className="flex min-h-full justify-center bg-[#f2f4f6]">
+              {/* 메인 앱 컨테이너 */}
+              <div className="relative flex w-full max-w-[600px] flex-col bg-white shadow-[0_0_100px_rgba(0,0,0,0.05)] md:my-0 min-h-screen">
+                <Sidebar />
                 <MobileHeader />
-                <main className="flex-1 overflow-y-auto">
-                  <div className="container mx-auto max-w-6xl px-6 py-10">
+                <main className="flex-1 pb-32">
+                  <div className="px-6 py-8">
                     {children}
                   </div>
                 </main>
+                <MobileBottomNav />
               </div>
             </div>
           </ThemeProvider>

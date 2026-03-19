@@ -57,7 +57,28 @@ export function ManageCategoriesModal({
   const [activeTab, setActiveTab] = useState<TransactionType>("지출");
   const [loading, setLoading] = useState(false);
 
+  // Category Fetch (Firebase 주석 처리 및 기본 데이터 사용)
   useEffect(() => {
+    const mockCategories: Category[] = [
+      { id: "1", name: "식비", type: "지출", order: 1 },
+      { id: "2", name: "교통", type: "지출", order: 2 },
+      { id: "3", name: "쇼핑", type: "지출", order: 3 },
+      { id: "4", name: "의료", type: "지출", order: 4 },
+      { id: "5", name: "여가", type: "지출", order: 5 },
+      { id: "6", name: "생활", type: "지출", order: 6 },
+      { id: "7", name: "주거", type: "지출", order: 7 },
+      { id: "8", name: "기타", type: "지출", order: 8 },
+      { id: "9", name: "급여", type: "수입", order: 1 },
+      { id: "10", name: "보너스", type: "수입", order: 2 },
+      { id: "11", name: "이자/배당", type: "수입", order: 3 },
+      { id: "12", name: "부수입", type: "수입", order: 4 },
+      { id: "13", name: "기타", type: "수입", order: 5 },
+      { id: "14", name: "이체", type: "이체", order: 1 },
+      { id: "15", name: "저축", type: "이체", order: 2 },
+    ];
+    setCategories(mockCategories);
+
+    /*
     if (!user || !isOpen) return;
 
     const q = query(
@@ -79,9 +100,11 @@ export function ManageCategoriesModal({
     });
 
     return () => unsubscribe();
+    */
   }, [user, isOpen]);
 
   const initializeDefaults = async () => {
+    /*
     if (!user) return;
     const batch = writeBatch(db);
     const colRef = collection(db, "users", user.uid, "categories");
@@ -92,10 +115,14 @@ export function ManageCategoriesModal({
     });
 
     await batch.commit();
+    */
   };
 
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
+    alert("현재 테스트 모드입니다. 카테고리 추가는 파이어베이스 활성화 후 가능합니다.");
+    setNewCatName("");
+    /*
     if (!user || !newCatName.trim()) return;
 
     setLoading(true);
@@ -118,9 +145,12 @@ export function ManageCategoriesModal({
     } finally {
       setLoading(false);
     }
+    */
   };
 
   const handleDeleteCategory = async (id: string) => {
+    alert("현재 테스트 모드입니다. 카테고리 삭제는 파이어베이스 활성화 후 가능합니다.");
+    /*
     if (
       !user ||
       !confirm(
@@ -134,6 +164,7 @@ export function ManageCategoriesModal({
     } catch (error) {
       console.error("Error deleting category:", error);
     }
+    */
   };
 
   return (

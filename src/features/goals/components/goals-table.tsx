@@ -12,50 +12,50 @@ export function GoalsTable({ goals }: GoalsTableProps) {
   if (!goals || goals.length === 0) return null;
 
   return (
-    <Card className="overflow-hidden p-0 rounded-none border-x-0 border-b-0 md:border md:rounded-md">
-      <div className="overflow-x-auto">
+    <Card className="overflow-hidden border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white rounded-[24px]">
+      <div className="overflow-x-auto px-4">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-secondary/50 text-xs uppercase tracking-wider text-muted-foreground">
+          <thead className="bg-white border-b border-[#f2f4f6]">
             <tr>
-              <th className="px-4 py-3 font-medium">Year</th>
-              <th className="px-4 py-3 font-medium">Age</th>
-              <th className="px-4 py-3 font-medium text-right">Housing</th>
-              <th className="px-4 py-3 font-medium text-right">Vehicle</th>
-              <th className="px-4 py-3 font-medium text-right">Education</th>
-              <th className="px-4 py-3 font-medium text-right">Family</th>
-              <th className="px-4 py-3 font-medium text-right">Others</th>
-              <th className="px-4 py-3 font-medium text-right">Total</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider">연도</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider">나이</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">주거</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">차량</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">교육</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">가족</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">기타</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">연간 합계</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody className="divide-y divide-[#f2f4f6]">
             {goals.map((g) => (
               <tr
                 key={g.id}
-                className="hover:bg-secondary/30 transition-colors"
+                className="hover:bg-[#f9fafb] transition-colors group"
               >
-                <td className="px-4 py-3 font-mono-num text-muted-foreground">
+                <td className="px-6 py-5 font-mono-num text-[#8b95a1] font-bold">
                   {g.year}
                 </td>
-                <td className="px-4 py-3 font-mono-num text-muted-foreground">
-                  {g.age}
+                <td className="px-6 py-5 font-mono-num text-[#4e5968] font-medium">
+                  {g.age}세
                 </td>
-                <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                  {g.house.toLocaleString()}
+                <td className="px-6 py-5 text-right font-mono-num text-[#8b95a1] font-medium">
+                  {g.house > 0 ? g.house.toLocaleString() : "-"}
                 </td>
-                <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                  {g.car.toLocaleString()}
+                <td className="px-6 py-5 text-right font-mono-num text-[#8b95a1] font-medium">
+                  {g.car > 0 ? g.car.toLocaleString() : "-"}
                 </td>
-                <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                  {g.education.toLocaleString()}
+                <td className="px-6 py-5 text-right font-mono-num text-[#8b95a1] font-medium">
+                  {g.education > 0 ? g.education.toLocaleString() : "-"}
                 </td>
-                <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                  {g.familyExpense.toLocaleString()}
+                <td className="px-6 py-5 text-right font-mono-num text-[#8b95a1] font-medium">
+                  {g.familyExpense > 0 ? g.familyExpense.toLocaleString() : "-"}
                 </td>
-                <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                  {g.etc.toLocaleString()}
+                <td className="px-6 py-5 text-right font-mono-num text-[#8b95a1] font-medium">
+                  {g.etc > 0 ? g.etc.toLocaleString() : "-"}
                 </td>
-                <td className="px-4 py-3 text-right font-bold font-mono-num text-foreground">
-                  {g.totalNeeded.toLocaleString()}
+                <td className="px-6 py-5 text-right font-bold font-mono-num text-[#191f28] text-lg">
+                  ₩ {g.totalNeeded.toLocaleString()}
                 </td>
               </tr>
             ))}

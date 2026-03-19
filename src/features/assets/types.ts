@@ -89,6 +89,8 @@ export interface Transaction {
   category: string;
   memo: string;
   currency: Currency;
+  tripId?: string; // 여행 프로젝트 연결 ID (선택 사항)
+  isTravel?: boolean; // 여행 전용 지출 여부
   createdAt: any; // Firebase serverTimestamp
 }
 
@@ -105,5 +107,17 @@ export interface Budget {
   month: string; // YYYY-MM
   amount: number;
   currency: Currency;
+  updatedAt: any;
+}
+
+export interface Trip {
+  id: string;
+  name: string; // 여행지명 (예: 오사카 식도락 여행)
+  startDate: string; // 시작일
+  endDate: string; // 종료일
+  budget: number; // 여행 총 예산
+  currency: Currency;
+  emoji: string; // 대표 이모지
+  status: "upcoming" | "active" | "completed";
   updatedAt: any;
 }

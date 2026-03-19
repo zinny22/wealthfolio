@@ -8,13 +8,14 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import {
   LayoutDashboard,
-  LineChart,
   Wallet,
   PiggyBank,
   ShieldCheck,
   Menu,
   LogOut,
   User as UserIcon,
+  Plane,
+  Settings2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,11 +28,11 @@ import {
 import { useState } from "react";
 
 const NAV_ITEMS = [
-  { label: "대시보드", href: "/", icon: LayoutDashboard },
-  { label: "포트폴리오", href: "/portfolio", icon: LineChart },
-  { label: "입출금", href: "/cash", icon: Wallet },
+  { label: "홈", href: "/", icon: LayoutDashboard },
+  { label: "소비", href: "/cash", icon: Wallet },
+  { label: "여행", href: "/travel", icon: Plane },
   { label: "예적금", href: "/savings", icon: PiggyBank },
-  { label: "보험/연금", href: "/insurance", icon: ShieldCheck },
+  { label: "보험", href: "/insurance", icon: ShieldCheck },
 ];
 
 function NavContent({
@@ -42,8 +43,8 @@ function NavContent({
   onLinkClick?: () => void;
 }) {
   return (
-    <nav className="flex-1 space-y-1 px-4 py-4">
-      <ul className="space-y-0.5">
+    <nav className="flex-1 space-y-1 px-4 py-6">
+      <ul className="space-y-1">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -51,13 +52,13 @@ function NavContent({
               <Link
                 href={item.href}
                 onClick={onLinkClick}
-                className={`group flex items-center gap-3 rounded-sm px-3 py-2 text-sm font-medium transition-colors ${
+                className={`group flex items-center gap-4 rounded-xl px-4 py-3 text-[15px] font-semibold transition-all duration-200 ${
                   isActive
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+                    ? "bg-[#3182f61a] text-[#3182f6]"
+                    : "text-[#4e5968] hover:bg-[#f2f4f6] hover:text-[#191f28]"
                 }`}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className={`h-5 w-5 ${isActive ? "text-[#3182f6]" : "text-[#8b95a1]"}`} />
                 {item.label}
               </Link>
             </li>
@@ -107,16 +108,16 @@ function UserProfile() {
   }
 
   return (
-    <div className="flex flex-col gap-2 p-4">
-      <div className="flex items-center gap-3 px-2 py-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary border border-border">
-          <UserIcon className="h-4 w-4" />
+    <div className="flex flex-col gap-2 p-6">
+      <div className="flex items-center gap-3 px-2 py-3 bg-[#f9fafb] rounded-2xl border border-[#e5e8eb]/50">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm border border-[#e5e8eb]">
+          <UserIcon className="h-5 w-5 text-[#8b95a1]" />
         </div>
         <div className="flex flex-col overflow-hidden">
-          <span className="text-xs font-medium text-foreground truncate">
+          <span className="text-sm font-bold text-[#191f28] truncate">
             {user.displayName || "사용자"}
           </span>
-          <span className="text-[10px] text-muted-foreground truncate">
+          <span className="text-[11px] text-[#8b95a1] truncate">
             {user.email}
           </span>
         </div>
@@ -124,7 +125,7 @@ function UserProfile() {
       <Button
         variant="ghost"
         size="sm"
-        className="w-full justify-start text-muted-foreground hover:text-foreground"
+        className="w-full justify-start text-[#8b95a1] hover:text-[#191f28] hover:bg-[#f2f4f6]"
         onClick={handleLogout}
       >
         <LogOut className="mr-2 h-4 w-4" />
@@ -135,80 +136,58 @@ function UserProfile() {
 }
 
 export function Sidebar() {
+  return null; 
+}
+
+export function MobileBottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
+  
+  if (!user) return null;
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 hidden w-60 flex-col border-r border-border bg-background md:flex">
-      <div className="flex h-14 items-center px-6 border-b border-border">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-lg font-semibold tracking-tight"
-        >
-          <div className="h-6 w-6 rounded-full bg-primary" />
-          Wealthfolio
-        </Link>
-        <div className="ml-auto">
-          <ModeToggle />
-        </div>
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[600px] bg-white/70 backdrop-blur-2xl border-t border-[#f2f4f6] pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
+      <div className="flex justify-around items-center h-20 px-2 lg:px-6">
+        {NAV_ITEMS.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex flex-col items-center justify-center gap-1.5 w-full h-full transition-all duration-300 ${
+                isActive ? "text-[#3182f6]" : "text-[#adb5bd]"
+              }`}
+            >
+              <item.icon className={`h-6 w-6 ${isActive ? "scale-110" : "scale-100"} transition-transform`} />
+              <span className={`text-[10px] font-bold ${isActive ? "text-[#3182f6]" : ""}`}>
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+        {/* 전체 메뉴 버튼 (Sheet 활용 가능) */}
+        <button className="flex flex-col items-center justify-center gap-1.5 w-full h-full text-[#adb5bd] hover:text-[#191f28] transition-colors">
+          <Menu className="h-6 w-6" />
+          <span className="text-[10px] font-bold">전체</span>
+        </button>
       </div>
-      {user && <NavContent pathname={pathname} />}
-      <div className="border-t border-border">
-        <UserProfile />
-      </div>
-    </aside>
+    </nav>
   );
 }
 
 export function MobileHeader() {
   const pathname = usePathname();
   const { user } = useAuth();
-  const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 flex h-14 items-center gap-4 border-b border-border bg-background px-6 md:hidden">
-      {user && (
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="-ml-2">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">메뉴 열기</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="w-64 p-0">
-            <SheetHeader className="px-6 py-4 border-b border-border text-left">
-              <SheetTitle className="text-left">
-                <Link
-                  href="/"
-                  className="flex items-center gap-2 text-lg font-semibold tracking-tight"
-                  onClick={() => setOpen(false)}
-                >
-                  <div className="h-6 w-6 rounded-full bg-primary" />
-                  Wealthfolio
-                </Link>
-              </SheetTitle>
-            </SheetHeader>
-            <div className="flex flex-col h-full pb-4">
-              <NavContent
-                pathname={pathname}
-                onLinkClick={() => setOpen(false)}
-              />
-              <div className="mt-auto px-6 py-4 border-t border-border flex justify-between items-center">
-                <span className="text-sm font-medium">테마 설정</span>
-                <ModeToggle />
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
-      )}
-      <div className="flex flex-1 items-center justify-between">
-        <span className="font-semibold text-lg">
-          {NAV_ITEMS.find((item) => item.href === pathname)?.label ||
-            "Wealthfolio"}
-        </span>
-        <div className="md:hidden">
-          {/* Right side of mobile header if needed */}
-        </div>
+    <header className="sticky top-0 z-50 flex h-16 items-center justify-between px-6 bg-white/60 backdrop-blur-md border-b border-[#f2f4f6]/50">
+      <span className="font-bold text-lg text-[#191f28]">
+        {NAV_ITEMS.find((item) => item.href === pathname)?.label || "Wealthfolio"}
+      </span>
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" className="rounded-full text-[#adb5bd] hover:bg-[#f2f4f6]">
+          <Settings2 className="h-5 w-5" />
+        </Button>
       </div>
     </header>
   );

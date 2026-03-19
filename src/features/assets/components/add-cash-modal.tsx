@@ -26,6 +26,9 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    alert("현재 테스트 모드입니다. 계좌 추가는 파이어베이스 활성화 후 가능합니다.");
+    onClose();
+    /*
     if (!user) return;
 
     setLoading(true);
@@ -48,6 +51,7 @@ export function AddCashModal({ isOpen, onClose }: AddCashModalProps) {
     } finally {
       setLoading(false);
     }
+    */
   };
 
   return (

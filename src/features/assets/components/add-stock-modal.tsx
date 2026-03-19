@@ -77,8 +77,11 @@ export function AddStockModal({
     }
   }, [initialData, isOpen]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    alert("현재 테스트 모드입니다. 종목 저장은 파이어베이스 활성화 후 가능합니다.");
+    onClose();
+    /*
     if (!user) return;
 
     setLoading(true);
@@ -121,6 +124,7 @@ export function AddStockModal({
     } finally {
       setLoading(false);
     }
+    */
   };
 
   return (

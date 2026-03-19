@@ -11,8 +11,8 @@ interface NetWorthSummaryProps {
 export function NetWorthSummary({ snapshots }: NetWorthSummaryProps) {
   if (!snapshots || snapshots.length === 0) {
     return (
-      <Card className="text-sm text-muted-foreground">
-        데이터가 없습니다. (나중에 DB 연결 예정)
+      <Card className="p-8 text-center text-[#8b95a1] font-medium border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+        데이터가 없습니다.
       </Card>
     );
   }
@@ -28,50 +28,46 @@ export function NetWorthSummary({ snapshots }: NetWorthSummaryProps) {
       : "flat";
 
   return (
-    <Card className="space-y-4 text-sm">
-      <div className="flex items-center justify-between border-b border-border pb-3">
-        <span className="text-muted-foreground font-medium uppercase tracking-wide text-xs">
-          Date
-        </span>
-        <span className="font-medium text-foreground font-mono-num">
-          {latest.date}
-        </span>
-      </div>
-      <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">Assets / Liabilities</span>
-          <span className="text-foreground font-mono-num">
-            {latest.totalAssets.toLocaleString()} /{" "}
-            {latest.totalLiabilities.toLocaleString()}
-          </span>
+    <Card className="p-8 bg-white border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden group">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-[#8b95a1]">현재 순자산 ({latest.date})</p>
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-4xl font-bold text-[#191f28] tracking-tight font-mono-num">
+              ₩ {latest.netWorth.toLocaleString()}
+            </h2>
+            <span className="text-sm text-[#8b95a1]">KRW</span>
+          </div>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-muted-foreground font-medium">Net Worth</span>
-          <span className="font-bold text-foreground text-lg font-mono-num">
-            {latest.netWorth.toLocaleString()}
-          </span>
-        </div>
+        
         {prev && (
-          <div className="flex justify-between items-center pt-2 border-t border-dashed border-border">
-            <span className="text-muted-foreground text-xs uppercase tracking-wide">
-              MoM Change
-            </span>
+          <div className="flex items-center gap-2 px-6 y-2 bg-[#f2f4f6] rounded-2xl group-hover:bg-[#3182f61a] transition-all py-2.5">
+            <span className="text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider">전월 대비</span>
             <span
-              className={`font-mono-num font-medium ${
+              className={`font-mono-num font-bold text-sm ${
                 direction === "up"
-                  ? "text-chart-up"
+                  ? "text-[#3182f6]"
                   : direction === "down"
-                  ? "text-chart-down"
-                  : "text-muted-foreground"
+                  ? "text-[#f04452]"
+                  : "text-[#8b95a1]"
               }`}
             >
               {latest.momChangeAmount >= 0 ? "+" : ""}
-              {latest.momChangeAmount.toLocaleString()} (
-              {latest.momChangeRate > 0 ? "+" : ""}
-              {latest.momChangeRate.toFixed(2)}%)
+              {latest.momChangeAmount.toLocaleString()} ({latest.momChangeRate > 0 ? "+" : ""}{latest.momChangeRate.toFixed(2)}%)
             </span>
           </div>
         )}
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-10 pt-8 border-t border-[#f2f4f6]">
+        <div className="space-y-2">
+          <p className="text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider">총 자산</p>
+          <p className="text-2xl font-bold text-[#191f28] font-mono-num">₩ {latest.totalAssets.toLocaleString()}</p>
+        </div>
+        <div className="space-y-2">
+          <p className="text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider">총 부채</p>
+          <p className="text-2xl font-bold text-[#f04452] font-mono-num">₩ {latest.totalLiabilities.toLocaleString()}</p>
+        </div>
       </div>
     </Card>
   );

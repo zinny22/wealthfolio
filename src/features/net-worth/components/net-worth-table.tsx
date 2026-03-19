@@ -14,50 +14,50 @@ export function NetWorthTable({ snapshots }: NetWorthTableProps) {
   }
 
   return (
-    <Card className="overflow-hidden p-0 rounded-none border-x-0 border-b-0 md:border md:rounded-md">
-      <div className="overflow-x-auto">
+    <Card className="overflow-hidden border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white rounded-[24px]">
+      <div className="overflow-x-auto px-4">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-secondary/50 text-xs uppercase tracking-wider text-muted-foreground">
+          <thead className="bg-white border-b border-[#f2f4f6]">
             <tr>
-              <th className="px-4 py-3 font-medium">Date</th>
-              <th className="px-4 py-3 font-medium text-right">Assets</th>
-              <th className="px-4 py-3 font-medium text-right">Liabilities</th>
-              <th className="px-4 py-3 font-medium text-right">Net Worth</th>
-              <th className="px-4 py-3 font-medium text-right">MoM Change</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider">기준일</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">총 자산</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">총 부채</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">순자산</th>
+              <th className="px-6 py-5 text-[11px] font-bold text-[#8b95a1] uppercase tracking-wider text-right">전월 대비</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
-            {snapshots.map((s) => (
+          <tbody className="divide-y divide-[#f2f4f6]">
+            {[...snapshots].reverse().map((s) => (
               <tr
                 key={s.id}
-                className="hover:bg-secondary/30 transition-colors"
+                className="hover:bg-[#f9fafb] transition-colors group"
               >
-                <td className="px-4 py-3 font-mono-num text-muted-foreground">
+                <td className="px-6 py-5 font-mono-num text-[#8b95a1] font-medium">
                   {s.date}
                 </td>
-                <td className="px-4 py-3 text-right font-mono-num text-foreground">
+                <td className="px-6 py-5 text-right font-mono-num text-[#191f28] font-semibold">
                   {s.totalAssets.toLocaleString()}
                 </td>
-                <td className="px-4 py-3 text-right font-mono-num text-foreground">
+                <td className="px-6 py-5 text-right font-mono-num text-[#f04452] font-semibold opacity-80">
                   {s.totalLiabilities.toLocaleString()}
                 </td>
-                <td className="px-4 py-3 text-right font-bold font-mono-num text-foreground">
+                <td className="px-6 py-5 text-right font-bold font-mono-num text-[#191f28] text-lg">
                   {s.netWorth.toLocaleString()}
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-6 py-5 text-right">
                   <span
-                    className={`font-mono-num font-medium ${
+                    className={`font-mono-num font-bold ${
                       s.momChangeAmount >= 0
-                        ? "text-chart-up"
-                        : "text-chart-down"
+                        ? "text-[#3182f6]"
+                        : "text-[#f04452]"
                     }`}
                   >
                     {s.momChangeAmount >= 0 ? "+" : ""}
                     {s.momChangeAmount.toLocaleString()}
                   </span>
-                  <span className="ml-2 text-xs text-muted-foreground font-mono-num">
+                  <span className="ml-2 text-[10px] text-[#8b95a1] font-bold font-mono-num">
                     ({s.momChangeRate > 0 ? "+" : ""}
-                    {s.momChangeRate.toFixed(2)}%)
+                    {s.momChangeRate.toFixed(1)}%)
                   </span>
                 </td>
               </tr>

@@ -2,75 +2,61 @@
 
 @layer base {
   :root {
-    /* Light Mode Variables */
-    --background: #ffffff;
-    --foreground: #09090b;
+    /* Toss Style Light Mode */
+    --background: #f2f4f6; /* 토스 배경 그레이 */
+    --foreground: #4e5968; /* 일반 텍스트 */
 
     --card: #ffffff;
-    --card-foreground: #09090b;
+    --card-foreground: #191f28; /* 강조된 텍스트 */
 
     --popover: #ffffff;
-    --popover-foreground: #09090b;
+    --popover-foreground: #191f28;
 
-    --primary: #18181b;
-    --primary-foreground: #fafafa;
+    --primary: #3182f6; /* 토스 블루 */
+    --primary-foreground: #ffffff;
 
-    --secondary: #f4f4f5;
-    --secondary-foreground: #18181b;
+    --secondary: #eef1f4;
+    --secondary-foreground: #333d4b;
 
-    --muted: #f4f4f5;
-    --muted-foreground: #71717a;
+    --muted: #f9fafb;
+    --muted-foreground: #8b95a1;
 
-    --accent: #f4f4f5;
-    --accent-foreground: #18181b;
+    --accent: #f2f4f6;
+    --accent-foreground: #191f28;
 
-    --destructive: #ef4444;
-    --destructive-foreground: #fafafa;
+    --destructive: #f04452; /* 토스 레드 */
+    --destructive-foreground: #ffffff;
 
-    --border: #e4e4e7;
-    --input: #e4e4e7;
-    --ring: #18181b;
+    --border: #e5e8eb;
+    --input: #e5e8eb;
+    --ring: #3182f6;
 
-    --radius: 0.5rem;
+    --radius: 1.5rem; /* 24px - 토스 스타일의 큰 곡률 */
 
-    /* Chart Colors - Light */
-    --chart-up: #10b981;
-    --chart-down: #ef4444;
+    /* Chart Colors */
+    --chart-up: #3182f6;
+    --chart-down: #f04452;
   }
 
   .dark {
-    /* Dark Mode Variables */
-    --background: #050505;
-    --foreground: #ededed;
+    /* Dark 모드에서도 토스 느낌의 세련된 다크 컬러 유지 (옵션) */
+    --background: #171c24;
+    --foreground: #adb5bd;
 
-    --card: #0a0a0a;
-    --card-foreground: #ededed;
+    --card: #202632;
+    --card-foreground: #f9fafb;
 
-    --popover: #0a0a0a;
-    --popover-foreground: #ededed;
+    --primary: #3182f6;
+    --primary-foreground: #ffffff;
 
-    --primary: #ffffff;
-    --primary-foreground: #000000;
+    --secondary: #2c3441;
+    --secondary-foreground: #f9fafb;
 
-    --secondary: #171717;
-    --secondary-foreground: #a1a1aa;
+    --muted: #2c3441;
+    --muted-foreground: #8b95a1;
 
-    --muted: #171717;
-    --muted-foreground: #a1a1aa;
-
-    --accent: #171717;
-    --accent-foreground: #ffffff;
-
-    --destructive: #7f1d1d;
-    --destructive-foreground: #fecaca;
-
-    --border: #262626;
-    --input: #262626;
-    --ring: #d4d4d8;
-
-    /* Chart Colors - Dark */
-    --chart-up: #10b981;
-    --chart-down: #ef4444;
+    --border: #2c3441;
+    --ring: #3182f6;
   }
 }
 
@@ -96,8 +82,8 @@
   --color-ring: var(--ring);
 
   --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 8px);
+  --radius-sm: calc(var(--radius) - 16px);
 
   --color-chart-up: var(--chart-up);
   --color-chart-down: var(--chart-down);
@@ -106,9 +92,9 @@
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.02em;
 }
 
 /* Custom Utility for Monospace Numbers */

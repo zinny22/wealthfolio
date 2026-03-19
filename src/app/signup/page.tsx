@@ -67,22 +67,22 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">
+    <div className="flex items-center justify-center min-vh-100 py-20">
+      <Card className="w-full max-w-[440px] border-none shadow-[0_8px_30px_rgb(0,0,0,0.06)] bg-white p-6 rounded-[32px]">
+        <CardHeader className="pt-8 pb-8">
+          <CardTitle className="text-3xl font-bold text-center text-[#191f28] tracking-tight">
             회원가입
           </CardTitle>
-          <CardDescription className="text-center">
-            Wealthfolio 계정을 만들어 자산을 관리하세요.
+          <CardDescription className="text-center text-[#8b95a1] font-medium mt-2">
+            Wealthfolio의 회원이 되어 자산을 체계적으로 관리하세요
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignup} className="space-y-4">
+          <form onSubmit={handleSignup} className="space-y-6">
             <div className="space-y-2">
               <label
                 htmlFor="name"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-xs font-bold text-[#8b95a1] ml-1 uppercase"
               >
                 이름
               </label>
@@ -93,28 +93,30 @@ export default function SignupPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
+                className="h-14 rounded-2xl border-none bg-[#f2f4f6] px-5 text-base focus-visible:ring-2 focus-visible:ring-[#3182f6]/20 transition-all"
               />
             </div>
             <div className="space-y-2">
               <label
                 htmlFor="email"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-xs font-bold text-[#8b95a1] ml-1 uppercase"
               >
                 이메일
               </label>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder="email@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="h-14 rounded-2xl border-none bg-[#f2f4f6] px-5 text-base focus-visible:ring-2 focus-visible:ring-[#3182f6]/20 transition-all"
               />
             </div>
             <div className="space-y-2">
               <label
                 htmlFor="password"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-xs font-bold text-[#8b95a1] ml-1 uppercase"
               >
                 비밀번호
               </label>
@@ -125,39 +127,42 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="h-14 rounded-2xl border-none bg-[#f2f4f6] px-5 text-base focus-visible:ring-2 focus-visible:ring-[#3182f6]/20 transition-all"
               />
             </div>
             <div className="space-y-2">
               <label
                 htmlFor="confirmPassword"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-xs font-bold text-[#8b95a1] ml-1 uppercase"
               >
                 비밀번호 확인
               </label>
               <Input
                 id="confirmPassword"
                 type="password"
+                placeholder="비밀번호 확인"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                className="h-14 rounded-2xl border-none bg-[#f2f4f6] px-5 text-base focus-visible:ring-2 focus-visible:ring-[#3182f6]/20 transition-all"
               />
             </div>
 
             {error && (
-              <div className="text-sm text-red-500 font-medium">{error}</div>
+              <div className="text-sm text-[#f04452] font-bold text-center px-2">{error}</div>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full h-14 rounded-2xl bg-[#3182f6] text-lg font-bold shadow-lg shadow-[#3182f6]/10 hover:bg-[#1b64da] transition-all active:scale-[0.98]" disabled={loading}>
               {loading ? "가입 중..." : "회원가입"}
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
+        <CardFooter className="flex justify-center pt-8 pb-4">
+          <p className="text-sm text-[#8b95a1] font-medium">
             이미 계정이 있으신가요?{" "}
             <Link
               href="/login"
-              className="text-primary hover:underline font-medium"
+              className="text-[#3182f6] hover:underline font-bold ml-1"
             >
               로그인
             </Link>

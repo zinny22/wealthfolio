@@ -9,6 +9,7 @@ import {
   TransactionType,
   Currency,
   Category,
+  Trip,
 } from "@/features/assets/types";
 import { db } from "@/lib/firebase";
 import {
@@ -50,9 +51,14 @@ export function AddTransactionModal({
     toAccountId: "",
     category: "",
     memo: "",
+    isTravel: false,
+    tripId: "",
   });
 
+  const [trips, setTrips] = useState<Trip[]>([]);
+
   useEffect(() => {
+    /* Firebase 주석 처리
     if (user && isOpen && (!initialAccounts || initialAccounts.length === 0)) {
       const fetchAccounts = async () => {
         const q = query(collection(db, "users", user.uid, "cash_accounts"));
@@ -70,7 +76,7 @@ export function AddTransactionModal({
         }
       };
       fetchAccounts();
-    } else if (initialAccounts && initialAccounts.length > 0) {
+    } else */ if (initialAccounts && initialAccounts.length > 0) {
       setAccounts(initialAccounts);
       if (!formData.accountId) {
         setFormData((prev) => ({ ...prev, accountId: initialAccounts[0].id }));
@@ -78,8 +84,30 @@ export function AddTransactionModal({
     }
   }, [user, isOpen, initialAccounts]);
 
-  // Fetch Categories
+  // Fetch Categories (Firebase 주석 처리 및 Mock 데이터 사용)
   useEffect(() => {
+    const mockCategories: Category[] = [
+      { id: "1", name: "식비", type: "지출", order: 1 },
+      { id: "2", name: "카페", type: "지출", order: 2 },
+      { id: "5", name: "급여", type: "수입", order: 1 },
+      { id: "6", name: "이체", type: "이체", order: 1 },
+      { id: "7", name: "기타", type: "지출", order: 5 },
+      // 여행 전용 카테고리 (isTravel일 때 활성화)
+      { id: "t1", name: "항공/교통", type: "지출", order: 10 },
+      { id: "t2", name: "숙박", type: "지출", order: 11 },
+      { id: "t3", name: "현지 식비", type: "지출", order: 12 },
+      { id: "t4", name: "관광/액티비티", type: "지출", order: 13 },
+      { id: "t5", name: "쇼핑", type: "지출", order: 14 },
+    ];
+    setCategories(mockCategories);
+
+    // 여행 프로젝트 Mock 데이터 (실제로는 API에서 가져옴)
+    setTrips([
+      { id: "trip1", name: "오사카 식도락 여행", emoji: "🍱" } as any,
+      { id: "trip2", name: "파리 한 달 살기", emoji: "🇫🇷" } as any,
+    ]);
+
+    /*
     if (!user || !isOpen) return;
 
     const q = query(
@@ -96,11 +124,20 @@ export function AddTransactionModal({
     });
 
     return () => unsubscribe();
+    */
   }, [user, isOpen]);
 
-  // Set initial category when type or categories change
+  // Set initial category when type, categories, or isTravel changes
   useEffect(() => {
-    const filtered = categories.filter((c) => c.type === formData.type);
+    const filtered = categories.filter((c) => {
+      const typeMatch = c.type === formData.type;
+      const isTravelCategory = ["t1", "t2", "t3", "t4", "t5"].includes(c.id);
+      if (formData.isTravel && formData.type === "지출") {
+        return typeMatch && isTravelCategory;
+      }
+      return typeMatch && !isTravelCategory;
+    });
+
     if (
       filtered.length > 0 &&
       (!formData.category ||
@@ -108,7 +145,7 @@ export function AddTransactionModal({
     ) {
       setFormData((prev) => ({ ...prev, category: filtered[0].name }));
     }
-  }, [formData.type, categories]);
+  }, [formData.type, categories, formData.isTravel]);
 
   // Update accountId if accounts change
   useEffect(() => {
@@ -118,7 +155,20 @@ export function AddTransactionModal({
   }, [accounts]);
 
   const handleTypeChange = (type: TransactionType) => {
-    const filtered = categories.filter((c) => c.type === type);
+    const isTravelCategories =
+      formData.isTravel &&
+      ["t1", "t2", "t3", "t4", "t5"].some((id) =>
+        categories.find((c) => c.id === id),
+      );
+
+    const filtered = categories.filter((c) => {
+      const typeMatch = c.type === type;
+      if (formData.isTravel && type === "지출") {
+        return typeMatch && ["t1", "t2", "t3", "t4", "t5"].includes(c.id);
+      }
+      return typeMatch && !["t1", "t2", "t3", "t4", "t5"].includes(c.id);
+    });
+
     setFormData((prev) => ({
       ...prev,
       type,
@@ -208,6 +258,8 @@ export function AddTransactionModal({
         toAccountId: "",
         category: categories.filter((c) => c.type === "지출")[0]?.name || "",
         memo: "",
+        isTravel: false,
+        tripId: "",
       });
     } catch (error) {
       console.error("Error adding transaction: ", error);
@@ -331,13 +383,45 @@ export function AddTransactionModal({
               required
             >
               {categories
-                .filter((c) => c.type === formData.type)
+                .filter((c) => {
+                  const typeMatch = c.type === formData.type;
+                  const isTravelCategory = ["t1", "t2", "t3", "t4", "t5"].includes(c.id);
+                  if (formData.isTravel && formData.type === "지출") {
+                     return typeMatch && isTravelCategory;
+                  }
+                  return typeMatch && !isTravelCategory;
+                })
                 .map((c) => (
                   <option key={c.id} value={c.name}>
                     {c.name}
                   </option>
                 ))}
             </select>
+          </div>
+
+          <div className="pt-2 border-t border-dashed">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-bold text-[#3182f6]">여행 지출 기록</label>
+              <input 
+                type="checkbox" 
+                checked={formData.isTravel}
+                onChange={(e) => setFormData({ ...formData, isTravel: e.target.checked })}
+                className="h-4 w-4 rounded"
+              />
+            </div>
+            {formData.isTravel && (
+              <select
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-xs"
+                value={formData.tripId}
+                onChange={(e) => setFormData({ ...formData, tripId: e.target.value })}
+                required
+              >
+                <option value="" disabled>어느 여행인가요?</option>
+                {trips.map(trip => (
+                  <option key={trip.id} value={trip.id}>{trip.emoji} {trip.name}</option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div>

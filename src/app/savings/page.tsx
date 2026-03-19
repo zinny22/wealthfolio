@@ -60,238 +60,115 @@ export default function SavingsPage() {
   const totalSavings = savings.reduce((sum, s) => sum + s.amount, 0);
 
   return (
-    <main className="space-y-6">
+    <main className="space-y-8">
       <AddSavingModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
       />
-      <div className="grid grid-cols-2 gap-4 md:flex md:items-center md:justify-between">
-        <div className="col-span-2 md:flex md:items-baseline md:gap-4">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+
+      {/* Hero Header */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <h1 className="text-2xl font-bold tracking-tight text-[#191f28]">
             예적금 현황
           </h1>
-          <div className="hidden md:block">
-            <span className="text-sm text-muted-foreground mr-2">
-              총 불입액 (원금)
-            </span>
-            <span className="text-xl font-bold text-foreground font-mono-num">
-              ₩ {totalSavings.toLocaleString()}
-            </span>
-          </div>
-        </div>
-
-        {/* Mobile Only Amount Display */}
-        <div className="col-span-1 text-left md:hidden">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">
-            Total Savings (Principal)
-          </p>
-          <p className="text-xl font-bold text-foreground font-mono-num">
-            ₩ {totalSavings.toLocaleString()}
-          </p>
-        </div>
-
-        <div className="col-span-1 flex justify-end">
           <Button
             onClick={() => setIsAddModalOpen(true)}
-            className="h-8 text-xs md:h-10 md:text-sm"
+            className="rounded-full bg-[#3182f6] hover:bg-[#1b64da] px-6 font-bold shadow-lg shadow-[#3182f6]/20 transition-all active:scale-95"
           >
             + 예적금 추가
           </Button>
         </div>
-      </div>
 
-      {loading ? (
-        <div className="flex justify-center p-8 text-muted-foreground">
-          로딩 중...
+        <Card className="p-8 bg-white border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group">
+           <div className="relative z-10">
+              <p className="text-sm font-medium text-[#8b95a1] mb-2">총 불입액 (원금)</p>
+              <div className="flex items-baseline gap-2">
+                 <h2 className="text-4xl font-bold text-[#191f28] tracking-tight font-mono-num">
+                    ₩ {totalSavings.toLocaleString()}
+                 </h2>
+                 <span className="text-sm text-[#8b95a1]">KRW</span>
+              </div>
+           </div>
+           <div className="absolute top-0 right-0 w-32 h-32 bg-linear-to-br from-[#3182f6] to-transparent opacity-5 transition-transform group-hover:scale-110 pointer-events-none" />
+        </Card>
+      </section>
+
+      {/* Savings List Section */}
+      <section className="space-y-4">
+        <div className="px-2 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-[#8b95a1]">가입 상품 ({savings.length})</h3>
         </div>
-      ) : savings.length === 0 ? (
-        <div className="flex justify-center p-8 border border-dashed rounded-md text-muted-foreground">
-          예적금 내역이 없습니다. '+ 예적금 추가'를 눌러 추가하세요.
-        </div>
-      ) : (
-        <>
-          <div className="hidden md:block">
-            <Card className="overflow-hidden p-0 rounded-none border-x-0 border-b-0 md:border md:rounded-md">
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-left text-sm whitespace-nowrap">
-                  <thead className="bg-secondary/50 text-xs uppercase tracking-wider text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">구분</th>
-                      <th className="px-4 py-3 font-medium">은행</th>
-                      <th className="px-4 py-3 font-medium">가입일</th>
-                      <th className="px-4 py-3 font-medium text-right">이율</th>
-                      <th className="px-4 py-3 font-medium text-right">기간</th>
-                      <th className="px-4 py-3 font-medium text-right">금액</th>
-                      <th className="px-4 py-3 font-medium text-center">
-                        비과세
-                      </th>
-                      <th className="px-4 py-3 font-medium text-center">
-                        통화
-                      </th>
-                      <th className="px-4 py-3 font-medium text-right">
-                        만기수령액(세전)
-                      </th>
-                      <th className="px-4 py-3 font-medium text-right">
-                        만기수령액(세후)
-                      </th>
-                      <th className="px-4 py-3 font-medium">만기일</th>
-                      <th className="px-4 py-3 font-medium text-right">환율</th>
-                      <th className="px-4 py-3 font-medium text-right">
-                        만기수령액(통화)
-                      </th>
-                      <th className="px-4 py-3 font-medium text-center">
-                        관리
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {savings.map((saving) => (
-                      <tr
-                        key={saving.id}
-                        className="hover:bg-secondary/30 transition-colors"
-                      >
-                        <td className="px-4 py-3">
-                          <span className="inline-flex items-center rounded-full bg-secondary px-2 py-1 text-xs font-medium text-muted-foreground">
+
+        {loading ? (
+          <div className="flex justify-center p-20 text-[#8b95a1] animate-pulse font-medium">로딩 중...</div>
+        ) : savings.length === 0 ? (
+          <Card className="p-12 text-center text-[#8b95a1] border-none shadow-none bg-white/30">
+            <p className="font-medium">등록된 예적금이 없습니다.</p>
+            <p className="text-xs mt-1">상단의 '+ 예적금 추가'를 눌러 자산을 등록해보세요.</p>
+          </Card>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+            {savings.map((saving) => (
+              <Card key={saving.id} className="p-6 transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] group relative overflow-hidden">
+                <div className="flex flex-col gap-6">
+                  {/* Top: Bank & Type */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-[#f2f4f6] flex items-center justify-center text-xl font-bold text-[#3182f6]">
+                        {saving.bankName.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="text-lg font-bold text-[#191f28] leading-tight">{saving.bankName}</h3>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${saving.type === '적금' ? 'bg-[#3182f61a] text-[#3182f6]' : 'bg-[#4caf501a] text-[#4caf50]'}`}>
                             {saving.type}
                           </span>
-                        </td>
-                        <td className="px-4 py-3 text-foreground">
-                          {saving.bankName}
-                        </td>
-                        <td className="px-4 py-3 font-mono-num text-muted-foreground">
-                          {saving.joinDate}
-                        </td>
-                        <td className="px-4 py-3 text-right font-mono-num text-foreground">
-                          {saving.interestRate.toFixed(2)}%
-                        </td>
-                        <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                          {saving.period}개월
-                        </td>
-                        <td className="px-4 py-3 text-right font-bold font-mono-num text-foreground">
-                          {saving.amount.toLocaleString()}
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <span
-                            className={`inline-flex h-2 w-2 rounded-full ${
-                              saving.isTaxFree
-                                ? "bg-emerald-500"
-                                : "bg-secondary"
-                            }`}
-                          />
-                        </td>
-                        <td className="px-4 py-3 text-center font-mono-num text-muted-foreground">
-                          {saving.currency}
-                        </td>
-                        <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                          {saving.maturityAmountPreTax.toLocaleString()}
-                        </td>
-                        <td className="px-4 py-3 text-right font-bold font-mono-num text-foreground">
-                          {saving.maturityAmountPostTax.toLocaleString()}
-                        </td>
-                        <td className="px-4 py-3 font-mono-num text-muted-foreground">
-                          {saving.maturityDate}
-                        </td>
-                        <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                          {saving.exchangeRate?.toLocaleString() || 1}
-                        </td>
-                        <td className="px-4 py-3 text-right font-mono-num text-foreground">
-                          {saving.currency === "USD" ? "$" : "₩"}{" "}
-                          {saving.maturityAmountOriginal.toLocaleString()}
-                        </td>
-                        <td className="px-4 py-3 text-center">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(saving.id)}
-                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                    <tr className="bg-secondary/20 font-bold">
-                      <td
-                        colSpan={5}
-                        className="px-4 py-3 text-right text-foreground"
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-[#8b95a1] font-medium">
+                          <span>가입: {saving.joinDate}</span>
+                          <span>•</span>
+                          <span>만기: {saving.maturityDate}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                       <p className="text-base font-bold text-[#191f28] font-mono-num">{saving.interestRate.toFixed(2)}%</p>
+                       <p className="text-[10px] text-[#8b95a1] font-bold mt-0.5 uppercase tracking-tighter">{saving.period}개월</p>
+                    </div>
+                  </div>
+
+                  {/* Body: Amount */}
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#f2f4f6]">
+                    <div>
+                      <p className="text-[11px] font-bold text-[#8b95a1] mb-1">불입 원금</p>
+                      <p className="text-xl font-bold text-[#191f28] font-mono-num">₩ {saving.amount.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[11px] font-bold text-[#8b95a1] mb-1">만기 예상 (세후)</p>
+                      <p className="text-xl font-bold text-[#3182f6] font-mono-num">₩ {saving.maturityAmountPostTax.toLocaleString()}</p>
+                    </div>
+                  </div>
+
+                  {/* Footer Stats & Actions */}
+                  <div className="flex items-center justify-between p-3 bg-[#f9fafb] rounded-2xl">
+                     <div className="flex gap-4 text-xs font-medium text-[#8b95a1]">
+                        {saving.isTaxFree && <span className="text-[#4caf50] font-bold">비과세 적용됨</span>}
+                        <span>수령액(세전): ₩{saving.maturityAmountPreTax.toLocaleString()}</span>
+                     </div>
+                     <button
+                        onClick={() => handleDelete(saving.id)}
+                        className="opacity-0 group-hover:opacity-100 p-2 text-[#8b95a1] hover:text-[#f04452] transition-all"
                       >
-                        총 합계 (원금)
-                      </td>
-                      <td className="px-4 py-3 text-right font-mono-num text-foreground">
-                        {totalSavings.toLocaleString()}
-                      </td>
-                      <td colSpan={8} />
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          </div>
-
-          {/* Mobile Card List View */}
-          <div className="grid gap-4 md:hidden">
-            {savings.map((saving) => (
-              <Card key={saving.id} className="p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="inline-flex items-center rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">
-                        {saving.type}
-                      </span>
-                      <h3 className="font-bold text-foreground">
-                        {saving.bankName}
-                      </h3>
-                      {saving.isTaxFree && (
-                        <span className="text-[10px] text-emerald-500 font-medium">
-                          비과세
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <span>가입: {saving.joinDate}</span>
-                      <span>•</span>
-                      <span>만기: {saving.maturityDate}</span>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleDelete(saving.id)}
-                    className="h-6 w-6 -mr-2 text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 pt-3 border-t border-border">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-0.5">
-                      불입금액 (원금)
-                    </p>
-                    <p className="text-lg font-bold font-mono-num text-foreground">
-                      ₩ {saving.amount.toLocaleString()}
-                    </p>
-                    <p className="text-xs font-mono-num text-muted-foreground mt-1">
-                      {saving.interestRate}% ({saving.period}개월)
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-muted-foreground mb-0.5">
-                      만기예상액 (세후)
-                    </p>
-                    <p className="text-lg font-bold font-mono-num text-chart-up">
-                      ₩ {saving.maturityAmountPostTax.toLocaleString()}
-                    </p>
-                    <p className="text-xs font-mono-num text-muted-foreground mt-1">
-                      {saving.currency}
-                    </p>
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                   </div>
                 </div>
               </Card>
             ))}
           </div>
-        </>
-      )}
+        )}
+      </section>
     </main>
   );
 }

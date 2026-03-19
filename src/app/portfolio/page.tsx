@@ -112,7 +112,7 @@ export default function PortfolioPage() {
   console.log(exchangeRate);
 
   return (
-    <main className="space-y-6">
+    <main className="space-y-8">
       <AddStockModal
         key={editingStock ? editingStock.id : "new"}
         isOpen={isAddModalOpen || !!editingStock}
@@ -122,292 +122,150 @@ export default function PortfolioPage() {
         }}
         initialData={editingStock}
       />
-      <div className="grid grid-cols-2 gap-4 md:flex md:items-center md:justify-between">
-        <div className="col-span-2 md:flex md:items-baseline md:gap-4">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+
+      {/* Hero Header */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between px-2">
+          <h1 className="text-2xl font-bold tracking-tight text-[#191f28]">
             주식 보유 내역
           </h1>
-          <div className="hidden md:block">
-            <span className="text-sm text-muted-foreground mr-2">
-              총 평가금액 (KRW)
-            </span>
-            <span className="text-xl font-bold text-foreground font-mono-num">
-              ₩ {totalValuation.toLocaleString()}
-            </span>
-          </div>
-        </div>
-
-        {/* Mobile Only Amount Display */}
-        <div className="col-span-1 text-left md:hidden">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider">
-            총 평가금액 (KRW)
-          </p>
-          <p className="text-xl font-bold text-foreground font-mono-num">
-            ₩ {totalValuation.toLocaleString()}
-          </p>
-        </div>
-
-        <div className="col-span-1 flex justify-end">
           <Button
             onClick={() => setIsAddModalOpen(true)}
-            className="h-8 text-xs md:h-10 md:text-sm"
+            className="rounded-full bg-[#3182f6] hover:bg-[#1b64da] px-6 font-bold shadow-lg shadow-[#3182f6]/20 transition-all active:scale-95"
           >
             + 종목 추가
           </Button>
         </div>
-      </div>
 
-      {loading ? (
-        <div className="flex justify-center p-8 text-muted-foreground">
-          로딩 중...
-        </div>
-      ) : stocks.length === 0 ? (
-        <div className="flex justify-center p-8 border border-dashed rounded-md text-muted-foreground">
-          주식 내역이 없습니다. '+ 종목 추가'를 눌러 추가하세요.
-        </div>
-      ) : (
-        <>
-          <div className="hidden md:block">
-            <Card className="overflow-hidden p-0 rounded-none border-x-0 border-b-0 md:border md:rounded-md">
-              <div className="overflow-x-auto">
-                <table className="min-w-full text-left text-sm whitespace-nowrap">
-                  <thead className="bg-secondary/50 text-xs uppercase tracking-wider text-muted-foreground">
-                    <tr>
-                      <th className="px-4 py-3 font-medium">구매일</th>
-                      <th className="px-4 py-3 font-medium">증권사</th>
-                      <th className="px-4 py-3 font-medium">매매구분</th>
-                      <th className="px-4 py-3 font-medium">종목명</th>
-                      <th className="px-4 py-3 font-medium">종목코드</th>
-                      <th className="px-4 py-3 font-medium">시장구분</th>
-                      <th className="px-4 py-3 font-medium">섹터</th>
-                      <th className="px-4 py-3 font-medium text-right">
-                        평단가
-                      </th>
-                      <th className="px-4 py-3 font-medium text-right">수량</th>
-                      <th className="px-4 py-3 font-medium">비고</th>
-                      <th className="px-4 py-3 font-medium text-right">환율</th>
-                      <th className="px-4 py-3 font-medium text-right">금액</th>
-                      <th className="px-4 py-3 font-medium text-right">
-                        실평단가
-                      </th>
-                      <th className="px-4 py-3 font-medium text-right">총액</th>
-                      <th className="px-4 py-3 font-medium text-right">
-                        총액(원)
-                      </th>
-                      <th className="px-4 py-3 font-medium text-right">
-                        실현손익(원)
-                      </th>
-                      <th className="px-4 py-3 font-medium text-right">
-                        평가수익률
-                      </th>
-                      <th className="px-4 py-3 font-medium text-center">
-                        관리
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border">
-                    {stocks.map((stock) => {
-                      const profitRate = calculateStockProfitRate(stock);
-                      const isProfit = profitRate >= 0;
-
-                      return (
-                        <tr
-                          key={stock.id}
-                          className="hover:bg-secondary/30 transition-colors"
-                        >
-                          <td className="px-4 py-3 font-mono-num text-muted-foreground">
-                            {stock.purchaseDate}
-                          </td>
-                          <td className="px-4 py-3 text-foreground">
-                            {stock.broker}
-                          </td>
-                          <td className="px-4 py-3">
-                            <span
-                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                                stock.tradeType === "매수"
-                                  ? "bg-emerald-500/10 text-emerald-500"
-                                  : "bg-rose-500/10 text-rose-500"
-                              }`}
-                            >
-                              {stock.tradeType}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 font-medium text-foreground">
-                            {stock.name}
-                          </td>
-                          <td className="px-4 py-3 font-mono-num text-muted-foreground">
-                            {stock.code}
-                          </td>
-                          <td className="px-4 py-3 text-muted-foreground">
-                            {stock.market}
-                          </td>
-                          <td className="px-4 py-3 text-muted-foreground text-xs uppercase">
-                            {stock.sector}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono-num text-foreground">
-                            {stock.currency === "USD" ? "$" : "₩"}{" "}
-                            {stock.unitPrice.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono-num text-foreground">
-                            {stock.quantity.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-muted-foreground text-xs truncate max-w-[100px]">
-                            {stock.note}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                            {stock.exchangeRate?.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                            {stock.amount.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                            {stock.adjustedAvgPrice.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono-num text-foreground">
-                            {stock.totalAmount.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono-num text-foreground font-bold">
-                            {stock.totalAmountKrw.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-right font-mono-num text-muted-foreground">
-                            {stock.realizedGain.toLocaleString()}
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <span
-                              className={`font-mono-num font-medium ${
-                                isProfit ? "text-chart-up" : "text-chart-down"
-                              }`}
-                            >
-                              {isProfit ? "+" : ""}
-                              {profitRate.toFixed(2)}%
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-center">
-                            <div className="flex items-center justify-center gap-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setEditingStock(stock)}
-                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleDelete(stock.id)}
-                                className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+        <Card className="p-8 bg-white overflow-hidden relative border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+           <div className="relative z-10">
+              <p className="text-sm font-medium text-[#8b95a1] mb-2">총 평가금액</p>
+              <div className="flex items-baseline gap-2">
+                 <h2 className="text-4xl font-bold text-[#191f28] tracking-tight font-mono-num">
+                    ₩ {totalValuation.toLocaleString()}
+                 </h2>
+                 <span className="text-sm text-[#8b95a1]">KRW</span>
               </div>
-            </Card>
-          </div>
+              <p className="mt-4 text-xs text-[#8b95a1] font-medium">
+                 현재 환율: <span className="text-[#191f28]">1 USD = {exchangeRate.toLocaleString()}원</span>
+              </p>
+           </div>
+        </Card>
+      </section>
 
-          {/* Mobile Card List View */}
-          <div className="grid gap-4 md:hidden">
+      {/* Stock List Section */}
+      <section className="space-y-4">
+        <div className="px-2 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-[#8b95a1]">보유 종목 ({stocks.length})</h3>
+        </div>
+
+        {loading ? (
+          <div className="flex justify-center p-20 text-[#8b95a1] animate-pulse font-medium">
+            데이터를 불러오는 중...
+          </div>
+        ) : stocks.length === 0 ? (
+          <Card className="p-12 text-center text-[#8b95a1] border-none shadow-none bg-white/50">
+            <p className="font-medium">보유하신 주식 종목이 없습니다.</p>
+            <p className="text-xs mt-1">상단의 '+ 종목 추가' 버튼을 눌러 자산을 등록해보세요.</p>
+          </Card>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             {stocks.map((stock) => {
               const profitRate = calculateStockProfitRate(stock);
               const isProfit = profitRate >= 0;
+              const valuation = calculateStockValuation(stock, exchangeRate);
 
               return (
-                <Card key={stock.id} className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
+                <Card 
+                  key={stock.id} 
+                  className="p-6 transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] group"
+                >
+                  <div className="flex flex-col gap-6">
+                    {/* Top Row: Name and Profit */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-[#f2f4f6] flex items-center justify-center text-xl font-bold text-[#3182f6]">
+                           {stock.name.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <h3 className="text-lg font-bold text-[#191f28] leading-tight">
+                              {stock.name}
+                            </h3>
+                            <span className="text-[11px] font-bold text-[#8b95a1] bg-[#f2f4f6] px-2 py-0.5 rounded-md">
+                              {stock.code}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-[#8b95a1] font-medium">
+                            <span>{stock.market}</span>
+                            <span>•</span>
+                            <span>{stock.broker}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right">
                         <span
-                          className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium border ${
-                            stock.tradeType === "매수"
-                              ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                              : "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                          className={`text-base font-bold font-mono-num ${
+                            isProfit ? "text-[#f04452]" : "text-[#3182f6]"
                           }`}
                         >
-                          {stock.tradeType}
+                          {isProfit ? "+" : ""}
+                          {profitRate.toFixed(2)}%
                         </span>
-                        <h3 className="font-bold text-foreground">
-                          {stock.name}
-                        </h3>
-                        <span className="text-xs text-muted-foreground">
-                          {stock.code}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                        <span>{stock.purchaseDate}</span>
-                        <span>•</span>
-                        <span>{stock.broker}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <span
-                        className={`font-mono-num font-bold text-sm ${
-                          isProfit ? "text-chart-up" : "text-chart-down"
-                        }`}
-                      >
-                        {isProfit ? "+" : ""}
-                        {profitRate.toFixed(2)}%
-                      </span>
-                      <div className="mt-1 flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setEditingStock(stock)}
-                          className="h-6 w-6 text-muted-foreground hover:text-foreground"
-                        >
-                          <Pencil className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(stock.id)}
-                          className="h-6 w-6 -mr-2 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 pt-3 border-t border-border">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-0.5">
-                        평가금액 (KRW)
-                      </p>
-                      <p className="text-lg font-bold font-mono-num text-foreground">
-                        ₩ {stock.totalAmountKrw.toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground mb-0.5">
-                        수량 / 평단가
-                      </p>
-                      <p className="text-sm font-medium font-mono-num text-foreground">
-                        {stock.quantity.toLocaleString()} 주
-                      </p>
-                      <p className="text-xs font-mono-num text-muted-foreground">
-                        @ {stock.currency === "USD" ? "$" : "₩"}{" "}
-                        {stock.unitPrice.toLocaleString()}
-                      </p>
-                      {stock.currency === "USD" && (
-                        <p className="text-[10px] font-mono-num text-muted-foreground mt-1">
-                          환율: {stock.exchangeRate?.toLocaleString()} /{" "}
-                          {exchangeRate.toLocaleString()}
+                        <p className="text-[10px] text-[#8b95a1] font-medium mt-0.5 font-mono-num">
+                           {stock.purchaseDate}
                         </p>
-                      )}
+                      </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#f2f4f6]">
+                       <div>
+                          <p className="text-[11px] font-semibold text-[#8b95a1] mb-1">현재가 총액</p>
+                          <p className="text-xl font-bold text-[#191f28] font-mono-num">
+                             ₩ {valuation.toLocaleString()}
+                          </p>
+                       </div>
+                       <div className="text-right">
+                          <p className="text-[11px] font-semibold text-[#8b95a1] mb-1">보유 수량</p>
+                          <p className="text-lg font-bold text-[#4e5968] font-mono-num">
+                             {stock.quantity.toLocaleString()} 주
+                          </p>
+                       </div>
+                    </div>
+
+                    {/* Detail Stats Section */}
+                    <div className="flex items-center justify-between text-xs text-[#8b95a1] font-medium bg-[#f9fafb] p-3 rounded-2xl">
+                       <div className="flex gap-4">
+                          <div>평단 <span className="text-[#4e5968] ml-1">{stock.currency === "USD" ? "$" : "₩"}{stock.unitPrice.toLocaleString()}</span></div>
+                          <div>환율 <span className="text-[#4e5968] ml-1">{stock.exchangeRate?.toLocaleString()}</span></div>
+                       </div>
+                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setEditingStock(stock)}
+                            className="h-8 w-8 text-[#8b95a1] hover:text-[#3182f6] hover:bg-[#3182f6]/10 rounded-full"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(stock.id)}
+                            className="h-8 w-8 text-[#8b95a1] hover:text-[#f04452] hover:bg-[#f04452]/10 rounded-full"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                       </div>
                     </div>
                   </div>
                 </Card>
               );
             })}
           </div>
-        </>
-      )}
+        )}
+      </section>
     </main>
   );
 }

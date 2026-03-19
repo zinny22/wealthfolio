@@ -11,7 +11,7 @@ interface GoalsSummaryProps {
 export function GoalsSummary({ goals }: GoalsSummaryProps) {
   if (!goals || goals.length === 0) {
     return (
-      <Card className="text-sm text-muted-foreground">
+      <Card className="p-8 text-center text-[#8b95a1] font-medium border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         목표 데이터가 없습니다.
       </Card>
     );
@@ -26,33 +26,32 @@ export function GoalsSummary({ goals }: GoalsSummaryProps) {
   );
 
   return (
-    <Card className="space-y-4 text-sm">
-      <div className="flex items-center justify-between border-b border-border pb-3">
-        <span className="text-muted-foreground font-medium uppercase tracking-wide text-xs">
-          Period
-        </span>
-        <span className="font-medium text-foreground font-mono-num">
-          {firstYear} ~ {lastYear}
-        </span>
-      </div>
-      <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">Total Required</span>
-          <span className="font-bold text-foreground text-lg font-mono-num">
-            {total.toLocaleString()}
-          </span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-muted-foreground">Peak Spending Year</span>
-          <div className="text-right">
-            <span className="text-foreground font-mono-num block">
-              {maxRow.year} ({maxRow.age}yo)
-            </span>
-            <span className="text-xs text-muted-foreground font-mono-num">
-              {maxRow.totalNeeded.toLocaleString()}
-            </span>
+    <Card className="p-8 bg-white border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden group">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-[#8b95a1]">전체 필요 예산 ({firstYear} ~ {lastYear})</p>
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-4xl font-bold text-[#191f28] tracking-tight font-mono-num">
+              ₩ {total.toLocaleString()}
+            </h2>
+            <span className="text-sm text-[#8b95a1]">KRW</span>
           </div>
         </div>
+
+        <div className="flex items-center gap-3 px-6 py-2.5 bg-[#f2f4f6] rounded-2xl group-hover:bg-[#3182f61a] transition-all">
+          <span className="text-[11px] font-bold text-[#8b95a1] tracking-wider uppercase">최대 지출 연도</span>
+          <div className="flex flex-col items-end">
+            <span className="text-sm font-bold text-[#191f28] font-mono-num">{maxRow.year} ({maxRow.age}세)</span>
+            <span className="text-[10px] font-bold text-[#3182f6] font-mono-num">₩ {maxRow.totalNeeded.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-10 pt-8 border-t border-[#f2f4f6]">
+         <div className="w-full h-3 bg-[#f2f4f6] rounded-full overflow-hidden mb-6">
+            <div className="h-full w-[15%] bg-[#3182f6] rounded-full transition-all duration-1000" />
+         </div>
+         <p className="text-xs font-bold text-[#3182f6]">현재 목표의 약 15%를 준비 중입니다 (예시)</p>
       </div>
     </Card>
   );

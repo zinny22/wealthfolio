@@ -81,211 +81,112 @@ export default function DashboardPage() {
   const insurancePct = grandTotal > 0 ? (insuranceTotal / grandTotal) * 100 : 0;
 
   return (
-    <main className="space-y-10">
-      <section>
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-bold tracking-tight uppercase text-foreground">
-            대시보드 개요
-          </h2>
-          <span className="text-xs text-muted-foreground font-mono-num">
-            {new Date().toLocaleDateString()} • USD/KRW:{" "}
-            {exchangeRate.toLocaleString()}원
+    <main className="space-y-12">
+      {/* Hero Section - Total Assets */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between px-2">
+          <h2 className="text-sm font-semibold text-[#8b95a1]">전체 자산</h2>
+          <span className="text-xs text-[#8b95a1] font-mono-num bg-white/50 px-3 py-1 rounded-full border border-[#e5e8eb]/50">
+            {new Date().toLocaleDateString()} • USD/KRW: {exchangeRate.toLocaleString()}원
           </span>
         </div>
-
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card>
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                총 자산
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <CardValue>₩ {grandTotal.toLocaleString()}</CardValue>
-              <div className="mt-3 text-xs text-muted-foreground">
-                주식 + 현금 + 예적금 + 보험
+        <Card className="p-8 md:p-12 overflow-hidden relative">
+           <div className="relative z-10">
+              <p className="text-sm font-medium text-[#4e5968] mb-2">내 자산 총합</p>
+              <div className="flex items-baseline gap-1">
+                 <h1 className="text-4xl md:text-5xl font-bold text-[#191f28] tracking-tight">
+                    ₩ {grandTotal.toLocaleString()}
+                 </h1>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                주식 보유액
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <CardValue>₩ {stockTotal.toLocaleString()}</CardValue>
-              <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                {stockPct.toFixed(1)}%
+              <div className="mt-8 flex gap-3 h-3 w-full max-w-md rounded-full bg-[#f2f4f6] overflow-hidden">
+                <div className="bg-[#3182f6] h-full" style={{ width: `${stockPct}%` }} />
+                <div className="bg-[#4caf50] h-full" style={{ width: `${(cashPct + savingsPct)}%` }} />
+                <div className="bg-[#ff9800] h-full" style={{ width: `${insurancePct}%` }} />
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                현금 및 예적금
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <CardValue>
-                ₩ {(cashTotal + savingsTotal).toLocaleString()}
-              </CardValue>
-              <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                <div className="h-2 w-2 rounded-full bg-blue-500" />
-                {(cashPct + savingsPct).toFixed(1)}%
+              <div className="mt-4 flex flex-wrap gap-4 text-xs text-[#8b95a1] font-medium">
+                 <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#3182f6]" /> 주식 {stockPct.toFixed(1)}%</div>
+                 <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#4caf50]" /> 현금/예적금 {(cashPct + savingsPct).toFixed(1)}%</div>
+                 <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#ff9800]" /> 보험 {insurancePct.toFixed(1)}%</div>
               </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="p-4 pb-2">
-              <CardTitle className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                보험 및 연금
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-4 pt-0">
-              <CardValue>₩ {insuranceTotal.toLocaleString()}</CardValue>
-              <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-                <div className="h-2 w-2 rounded-full bg-orange-500" />
-                {insurancePct.toFixed(1)}%
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+           </div>
+           {/* Decorative Gradient Background */}
+           <div className="absolute top-0 right-0 w-64 h-64 bg-linear-to-bl from-[#3182f6]/5 to-transparent rounded-full -mr-20 -mt-20 blur-3xl pointer-events-none" />
+        </Card>
       </section>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <section className="md:col-span-2 space-y-4">
-          <h3 className="text-sm font-bold uppercase text-foreground">
-            자산별 내역
-          </h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            {/* Stocks Breakdown */}
-            <Card>
-              <CardHeader className="p-5 pb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    주식
-                  </span>
-                  <span className="text-xs font-bold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                    {stockPct.toFixed(1)}%
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="p-5 pt-0">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold font-mono-num text-foreground">
-                    ₩ {stockTotal.toLocaleString()}
-                  </span>
-                </div>
-                <div className="mt-3 h-1.5 w-full rounded-full bg-secondary overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-emerald-500 transition-all duration-500"
-                    style={{ width: `${stockPct}%` }}
-                  />
-                </div>
-                  {stocks.length}개 종목
-              </CardContent>
-            </Card>
+      <div className="grid gap-8 grid-cols-1 lg:grid-cols-3">
+        {/* Main Content Areas */}
+        <div className="lg:col-span-2 space-y-6">
+           <div className="px-2 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-[#191f28]">보유 자산 내역</h3>
+           </div>
+           <div className="grid gap-4 md:grid-cols-2">
+              <AssetSummaryCard 
+                title="주식" 
+                amount={stockTotal} 
+                percentage={stockPct} 
+                count={`${stocks.length}개 종목`} 
+                color="#3182f6" 
+              />
+              <AssetSummaryCard 
+                title="현금" 
+                amount={cashTotal} 
+                percentage={cashPct} 
+                count={`${cashAccounts.length}개 계좌`} 
+                color="#2196f3" 
+              />
+              <AssetSummaryCard 
+                title="예적금" 
+                amount={savingsTotal} 
+                percentage={savingsPct} 
+                count={`${savings.length}개 상품`} 
+                color="#673ab7" 
+              />
+              <AssetSummaryCard 
+                title="보험" 
+                amount={insuranceTotal} 
+                percentage={insurancePct} 
+                count={`${insurances.length}건`} 
+                color="#f44336" 
+              />
+           </div>
+        </div>
 
-            {/* Cash Breakdown */}
-            <Card>
-              <CardHeader className="p-5 pb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    현금
-                  </span>
-                  <span className="text-xs font-bold text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded-full">
-                    {cashPct.toFixed(1)}%
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="p-5 pt-0">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold font-mono-num text-foreground">
-                    ₩ {cashTotal.toLocaleString()}
-                  </span>
-                </div>
-                <div className="mt-3 h-1.5 w-full rounded-full bg-secondary overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-blue-500 transition-all duration-500"
-                    style={{ width: `${cashPct}%` }}
-                  />
-                </div>
-                  {cashAccounts.length}개 계좌
-              </CardContent>
-            </Card>
-
-            {/* Savings Breakdown */}
-            <Card>
-              <CardHeader className="p-5 pb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    예적금
-                  </span>
-                  <span className="text-xs font-bold text-violet-500 bg-violet-500/10 px-2 py-0.5 rounded-full">
-                    {savingsPct.toFixed(1)}%
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="p-5 pt-0">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold font-mono-num text-foreground">
-                    ₩ {savingsTotal.toLocaleString()}
-                  </span>
-                </div>
-                <div className="mt-3 h-1.5 w-full rounded-full bg-secondary overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-violet-500 transition-all duration-500"
-                    style={{ width: `${savingsPct}%` }}
-                  />
-                </div>
-                  {savings.length}개 상품
-              </CardContent>
-            </Card>
-
-            {/* Insurance Breakdown */}
-            <Card>
-              <CardHeader className="p-5 pb-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    보험
-                  </span>
-                  <span className="text-xs font-bold text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded-full">
-                    {insurancePct.toFixed(1)}%
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="p-5 pt-0">
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold font-mono-num text-foreground">
-                    ₩ {insuranceTotal.toLocaleString()}
-                  </span>
-                </div>
-                <div className="mt-3 h-1.5 w-full rounded-full bg-secondary overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-orange-500 transition-all duration-500"
-                    style={{ width: `${insurancePct}%` }}
-                  />
-                </div>
-                  {insurances.length}건
-              </CardContent>
-            </Card>
-          </div>
-        </section>
-
-        <section className="h-full">
-          <div className="h-full pt-9">
-            <AssetAllocationChart
+        {/* Chart Sidebar */}
+        <div className="space-y-6">
+           <div className="px-2 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-[#191f28]">자산 비중</h3>
+           </div>
+           <AssetAllocationChart
               stockTotal={stockTotal}
               cashTotal={cashTotal}
               savingsTotal={savingsTotal}
               insuranceTotal={insuranceTotal}
               grandTotal={grandTotal}
             />
-          </div>
-        </section>
+        </div>
       </div>
     </main>
+  );
+}
+
+function AssetSummaryCard({ title, amount, percentage, count, color }: { title: string, amount: number, percentage: number, count: string, color: string }) {
+  return (
+    <Card className="p-6 group cursor-pointer hover:shadow-xl transition-all duration-300">
+      <div className="flex flex-col h-full justify-between">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-sm font-semibold text-[#4e5968]">{title}</span>
+          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#f2f4f6] text-[#8b95a1] group-hover:bg-[#3182f6]/10 group-hover:text-[#3182f6] transition-colors">
+            {percentage.toFixed(1)}%
+          </span>
+        </div>
+        <div>
+          <p className="text-xl font-bold text-[#191f28] mb-1">
+            ₩ {amount.toLocaleString()}
+          </p>
+          <p className="text-xs text-[#8b95a1] font-medium">{count}</p>
+        </div>
+      </div>
+    </Card>
   );
 }
