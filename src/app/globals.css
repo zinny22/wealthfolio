@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  scrollbar-gutter: stable;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #191f28; /* 토스 스타일의 짙은 회색 텍스트 */
@@ -54,4 +58,13 @@ body {
 /* 탭 바나 버튼 등에서 모바일 터치 시 발생하는 파란색 하이라이트 제거 */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* 스크롤바 숨기기 유틸리티 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }

@@ -16,15 +16,21 @@ import Header from "@/components/common/Header";
 const menuGroups = [
   {
     title: "자산 관리",
-    items: [
-      {
-        id: "categories",
-        label: "카테고리 관리",
-        icon: Tag,
-        path: "/all/categories",
-      },
-      { id: "cards", label: "카드 관리", icon: CreditCard, path: "/all/cards" },
-    ],
+        items: [
+          {
+            id: "categories",
+            label: "카테고리 관리",
+            icon: Tag,
+            path: "/all/categories",
+          },
+          {
+            id: "travel-categories",
+            label: "여행 카테고리 관리",
+            icon: Tag,
+            path: "/all/travel-categories",
+          },
+          { id: "cards", label: "카드 관리", icon: CreditCard, path: "/all/cards" },
+        ],
   },
   {
     title: "설정 및 기타",

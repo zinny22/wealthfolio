@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 interface HeaderProps {
   title: string | React.ReactNode;
   showBack?: boolean;
+  onBack?: () => void;
   rightAction?: React.ReactNode;
   transparent?: boolean;
 }
@@ -14,6 +15,7 @@ interface HeaderProps {
 export default function Header({
   title,
   showBack = false,
+  onBack,
   rightAction,
   transparent = false,
 }: HeaderProps) {
@@ -28,7 +30,7 @@ export default function Header({
       <div className="flex items-center gap-3">
         {showBack && (
           <button
-            onClick={() => router.back()}
+            onClick={() => onBack ? onBack() : router.back()}
             className="p-2 -ml-2 text-slate-400 hover:text-slate-600 transition-colors active:scale-90"
           >
             <ChevronLeft size={24} strokeWidth={2.5} />
