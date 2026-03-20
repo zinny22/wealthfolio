@@ -2,25 +2,56 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #191f28; /* 토스 스타일의 짙은 회색 텍스트 */
+  --app-bg: #f2f4f6; /* 토스 앱 배경 느낌의 연한 그레이 */
+  --toss-blue: #3182f6;
+  --toss-blue-light: #e8f3ff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-primary: var(--toss-blue);
+  --color-primary-light: var(--toss-blue-light);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a; /* 조금 더 깊은 남색 계열의 어두운 배경 */
+    --foreground: #f1f5f9;
+    --app-bg: #020617;
   }
 }
 
 body {
-  background: var(--background);
+  background: var(--app-bg); /* 외부 영역 배경 */
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 모바일 앱 느낌을 위한 스크롤바 커스텀 (데스크탑에서도 깔끔하게 보이도록) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+/* 탭 바나 버튼 등에서 모바일 터치 시 발생하는 파란색 하이라이트 제거 */
+* {
+  -webkit-tap-highlight-color: transparent;
 }
