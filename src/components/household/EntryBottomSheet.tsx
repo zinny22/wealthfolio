@@ -116,18 +116,19 @@ export default function EntryBottomSheet({
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] bg-white dark:bg-slate-900 rounded-t-4xl p-8 pb-12 z-70 shadow-2xl shadow-black/20 max-h-[90vh] overflow-y-auto"
+              className="fixed bottom-0 left-0 right-0 mx-auto w-full max-w-[600px] bg-white dark:bg-slate-900 rounded-t-4xl z-70 shadow-2xl shadow-black/20 max-h-[92vh] flex flex-col overflow-x-hidden"
             >
-              <div className="w-12 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mx-auto mb-8 shrink-0" />
+              <div className="w-12 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mx-auto my-4 shrink-0" />
               
-              <div className="flex flex-col gap-7 pb-4">
+              <div className="flex-1 overflow-y-auto px-8 pb-4 no-scrollbar">
+                <div className="flex flex-col gap-7 py-2">
                 {/* 1. Header & Type Selector */}
-                <div className="flex justify-between items-start">
-                  <div className="space-y-4">
-                    <h3 className="text-xl font-extrabold tracking-tight">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-6">
+                  <div className="space-y-4 w-full sm:w-auto">
+                    <h3 className="text-xl font-extrabold tracking-tight truncate">
                       {mode === "edit" ? "내역 수정하기" : "새로운 내역 기록"}
                     </h3>
-                    <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl w-fit">
+                    <div className="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl w-full sm:w-fit">
                       <button
                         onClick={() => { setType("expense"); setCategory("식비"); }}
                         className={`px-6 py-2 rounded-xl text-[13px] font-bold transition-all ${
@@ -231,10 +232,15 @@ export default function EntryBottomSheet({
                   />
                 </div>
 
+                </div>
+              </div>
+
+              {/* Fixed Footer */}
+              <div className="px-8 pb-10 pt-4 bg-white dark:bg-slate-900 border-t border-slate-50 dark:border-slate-800 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
                 <button
                   onClick={handleSubmit}
                   disabled={!amount || parseInt(amount) === 0}
-                  className="w-full h-16 bg-primary disabled:bg-slate-100 dark:disabled:bg-slate-800 text-white disabled:text-slate-300 rounded-2xl text-[17px] font-extrabold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 mt-4"
+                  className="w-full h-16 bg-primary disabled:bg-slate-100 dark:disabled:bg-slate-800 text-white disabled:text-slate-300 rounded-2xl text-[17px] font-extrabold shadow-lg shadow-primary/20 transition-all active:scale-95"
                 >
                   {mode === "edit" ? "정보 수정하기" : "입력 완료"}
                 </button>

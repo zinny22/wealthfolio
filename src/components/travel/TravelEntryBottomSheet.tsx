@@ -104,7 +104,7 @@ export default function TravelEntryBottomSheet({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] bg-white dark:bg-slate-900 rounded-t-4xl z-[70] shadow-2xl shadow-black/20 max-h-[92vh] flex flex-col"
+            className="fixed bottom-0 left-0 right-0 mx-auto w-full max-w-[600px] bg-white dark:bg-slate-900 rounded-t-4xl z-[70] shadow-2xl shadow-black/20 max-h-[92vh] flex flex-col overflow-x-hidden"
           >
             <div className="w-12 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mx-auto my-4 shrink-0" />
             
