@@ -1,125 +1,26 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    /* Toss Style Light Mode */
-    --background: #f2f4f6; /* 토스 배경 그레이 */
-    --foreground: #4e5968; /* 일반 텍스트 */
-
-    --card: #ffffff;
-    --card-foreground: #191f28; /* 강조된 텍스트 */
-
-    --popover: #ffffff;
-    --popover-foreground: #191f28;
-
-    --primary: #3182f6; /* 토스 블루 */
-    --primary-foreground: #ffffff;
-
-    --secondary: #eef1f4;
-    --secondary-foreground: #333d4b;
-
-    --muted: #f9fafb;
-    --muted-foreground: #8b95a1;
-
-    --accent: #f2f4f6;
-    --accent-foreground: #191f28;
-
-    --destructive: #f04452; /* 토스 레드 */
-    --destructive-foreground: #ffffff;
-
-    --border: #e5e8eb;
-    --input: #e5e8eb;
-    --ring: #3182f6;
-
-    --radius: 1.5rem; /* 24px - 토스 스타일의 큰 곡률 */
-
-    /* Chart Colors */
-    --chart-up: #3182f6;
-    --chart-down: #f04452;
-
-    /* Pastel Tones */
-    --income: #4ade80; /* Pastel Green */
-    --expense: #fb7185; /* Pastel Rose */
-    --budget: #60a5fa; /* Pastel Blue */
-    
-    --pastel-blue-bg: #e0f2fe;
-    --pastel-pink-bg: #fce7f3;
-    --pastel-yellow-bg: #fef3c7;
-    --pastel-purple-bg: #f3e8ff;
-    --pastel-green-bg: #dcfce7;
-  }
-
-  .dark {
-    /* Dark 모드에서도 토스 느낌의 세련된 다크 컬러 유지 (옵션) */
-    --background: #171c24;
-    --foreground: #adb5bd;
-
-    --card: #202632;
-    --card-foreground: #f9fafb;
-
-    --primary: #3182f6;
-    --primary-foreground: #ffffff;
-
-    --secondary: #2c3441;
-    --secondary-foreground: #f9fafb;
-
-    --muted: #2c3441;
-    --muted-foreground: #8b95a1;
-
-    --border: #2c3441;
-    --ring: #3182f6;
-  }
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
 
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 8px);
-  --radius-sm: calc(var(--radius) - 16px);
-
-  --color-chart-down: var(--chart-down);
-
-  --color-income: var(--income);
-  --color-expense: var(--expense);
-  --color-budget: var(--budget);
-
-  --color-pastel-blue: var(--pastel-blue-bg);
-  --color-pastel-pink: var(--pastel-pink-bg);
-  --color-pastel-yellow: var(--pastel-yellow-bg);
-  --color-pastel-purple: var(--pastel-purple-bg);
-  --color-pastel-green: var(--pastel-green-bg);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
 body {
-  background-color: var(--background);
+  background: var(--background);
   color: var(--foreground);
-  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.02em;
-}
-
-/* Custom Utility for Monospace Numbers */
-.font-mono-num {
-  font-variant-numeric: tabular-nums;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  letter-spacing: -0.02em;
+  font-family: Arial, Helvetica, sans-serif;
 }
