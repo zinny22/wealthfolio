@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Check, ArrowLeft, ArrowRight, Wallet, CreditCard, ChevronDown } from "lucide-react";
+import {
+  X,
+  Check,
+  ArrowLeft,
+  ArrowRight,
+  Wallet,
+  CreditCard,
+  ChevronDown,
+} from "lucide-react";
 import { useTransactionStore } from "@/store/useTransactionStore";
 import { format } from "date-fns";
 import { Transaction } from "@/types/transaction";
@@ -18,7 +26,11 @@ import * as Icons from "lucide-react";
 
 type Step = "amount" | "type_category" | "method_memo";
 
-export function TransactionInputModal({ isOpen, onClose, initialData }: TransactionInputModalProps) {
+export function TransactionInputModal({
+  isOpen,
+  onClose,
+  initialData,
+}: TransactionInputModalProps) {
   const [step, setStep] = useState<Step>("amount");
   const [amountStr, setAmountStr] = useState("0");
   const [type, setType] = useState<"income" | "expense">("expense");
@@ -26,24 +38,25 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
   const [method, setMethod] = useState<"card" | "cash">("card");
   const [memo, setMemo] = useState("");
 
-  const { categories, addTransaction, updateTransaction } = useTransactionStore();
+  const { categories, addTransaction, updateTransaction } =
+    useTransactionStore();
 
   useEffect(() => {
-     if (isOpen && initialData) {
-       setAmountStr(initialData.amount.toString());
-       setType(initialData.type);
-       setCategoryId(initialData.categoryId);
-       setMethod(initialData.method);
-       setMemo(initialData.memo || "");
-       setStep("amount"); // 수정 시에도 금액부터 확인
-     } else if (isOpen && !initialData) {
-       setAmountStr("0");
-       setType("expense");
-       setCategoryId("1");
-       setMethod("card");
-       setMemo("");
-       setStep("amount");
-     }
+    if (isOpen && initialData) {
+      setAmountStr(initialData.amount.toString());
+      setType(initialData.type);
+      setCategoryId(initialData.categoryId);
+      setMethod(initialData.method);
+      setMemo(initialData.memo || "");
+      setStep("amount"); // 수정 시에도 금액부터 확인
+    } else if (isOpen && !initialData) {
+      setAmountStr("0");
+      setType("expense");
+      setCategoryId("1");
+      setMethod("card");
+      setMemo("");
+      setStep("amount");
+    }
   }, [isOpen, initialData]);
 
   const handleNumberClick = (num: string) => {
@@ -109,15 +122,22 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
-          className="w-full max-w-[600px] bg-white rounded-t-5xl shadow-2xl p-8 flex flex-col h-[85vh] outline-none"
+          className="w-full max-w-[600px] bg-white rounded-t-[3rem] shadow-2xl p-8 flex flex-col h-[85vh] outline-none relative"
         >
+          {/* Universal Sheet Indicator */}
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-[#e5e8eb] rounded-full" />
+          
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <button onClick={step === "amount" ? onClose : handleBack} className="p-3 bg-[#f2f4f6] text-[#8b95a1] rounded-full hover:bg-[#e5e8eb] transition-all">
-              {step === "amount" ? <X size={20} /> : <ArrowLeft size={18} />}
+          <div className="flex items-center justify-between mt-4 mb-8">
+            <button onClick={step === "amount" ? onClose : handleBack} className="p-2.5 bg-[#f2f4f6] text-[#8b95a1] rounded-full hover:bg-[#e5e8eb] transition-all">
+              {step === "amount" ? <X size={18} /> : <ArrowLeft size={18} />}
             </button>
             <span className="text-base font-black text-[#191f28]">
-              {step === "amount" ? "금액 입력" : step === "type_category" ? "유형 및 카테고리" : "결제 및 메모"}
+              {step === "amount"
+                ? "금액 입력"
+                : step === "type_category"
+                  ? "유형 및 카테고리"
+                  : "결제 및 메모"}
             </span>
             <div className="w-10 h-10" /> {/* Spacer */}
           </div>
@@ -126,10 +146,14 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
             {step === "amount" && (
               <div className="flex flex-col h-full">
                 <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-                  <span className="text-sm font-bold text-[#adb5bd] mb-2 uppercase tracking-widest">Amount</span>
+                  <span className="text-sm font-bold text-[#adb5bd] mb-2 uppercase tracking-widest">
+                    Amount
+                  </span>
                   <div className="text-5xl font-black text-[#191f28] flex items-baseline gap-1">
                     {parseInt(amountStr).toLocaleString()}
-                    <span className="text-2xl font-bold text-[#8b95a1]">원</span>
+                    <span className="text-2xl font-bold text-[#8b95a1]">
+                      원
+                    </span>
                   </div>
                 </div>
 
@@ -139,7 +163,11 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
                     <motion.button
                       key={k}
                       whileTap={{ scale: 0.9, backgroundColor: "#f2f4f6" }}
-                      onClick={() => (k === "back" ? handleDelete() : handleNumberClick(k.toString()))}
+                      onClick={() =>
+                        k === "back"
+                          ? handleDelete()
+                          : handleNumberClick(k.toString())
+                      }
                       className="h-16 flex items-center justify-center text-xl font-extrabold text-[#4e5968] rounded-2xl bg-white border border-[#f2f4f6] active:shadow-inner"
                     >
                       {k === "back" ? <Icons.Delete size={24} /> : k}
@@ -156,7 +184,9 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
                   <button
                     onClick={() => setType("expense")}
                     className={`flex-1 py-3.5 rounded-xl font-black text-sm transition-all ${
-                      type === "expense" ? "bg-white text-expense shadow-sm" : "text-[#8b95a1]"
+                      type === "expense"
+                        ? "bg-white text-expense shadow-sm"
+                        : "text-[#8b95a1]"
                     }`}
                   >
                     지출
@@ -164,7 +194,9 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
                   <button
                     onClick={() => setType("income")}
                     className={`flex-1 py-3.5 rounded-xl font-black text-sm transition-all ${
-                      type === "income" ? "bg-white text-income shadow-sm" : "text-[#8b95a1]"
+                      type === "income"
+                        ? "bg-white text-income shadow-sm"
+                        : "text-[#8b95a1]"
                     }`}
                   >
                     수입
@@ -176,20 +208,28 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
                   {categories.map((cat) => {
                     const isSelected = categoryId === cat.id;
                     // @ts-ignore
-                    const IconComp = cat.icon ? (Icons[cat.icon as keyof typeof Icons] as any) : Icons.MoreHorizontal;
+                    const IconComp = cat.icon
+                      ? (Icons[cat.icon as keyof typeof Icons] as any)
+                      : Icons.MoreHorizontal;
                     return (
                       <motion.button
                         key={cat.id}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setCategoryId(cat.id)}
                         className={`flex flex-col items-center gap-2.5 p-4 rounded-3xl transition-all border-2 ${
-                          isSelected ? "border-primary bg-primary/5 shadow-lg shadow-primary/10" : "border-transparent bg-white hover:bg-[#f2f4f6]/50"
+                          isSelected
+                            ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
+                            : "border-transparent bg-white hover:bg-[#f2f4f6]/50"
                         }`}
                       >
-                        <div className={`w-12 h-12 flex items-center justify-center rounded-[1.25rem] ${cat.color} ${isSelected ? 'shadow-inner' : 'opacity-80'}`}>
+                        <div
+                          className={`w-12 h-12 flex items-center justify-center rounded-[1.25rem] ${cat.color} ${isSelected ? "shadow-inner" : "opacity-80"}`}
+                        >
                           <IconComp size={24} />
                         </div>
-                        <span className={`text-xs font-black ${isSelected ? "text-primary" : "text-[#4e5968]"}`}>
+                        <span
+                          className={`text-xs font-black ${isSelected ? "text-primary" : "text-[#4e5968]"}`}
+                        >
                           {cat.name}
                         </span>
                       </motion.button>
@@ -202,12 +242,16 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
             {step === "method_memo" && (
               <div className="flex flex-col gap-10 py-4">
                 <div className="flex flex-col gap-3">
-                  <h5 className="text-sm font-black text-[#adb5bd] uppercase tracking-widest pl-2">Payment Method</h5>
+                  <h5 className="text-sm font-black text-[#adb5bd] uppercase tracking-widest pl-2">
+                    Payment Method
+                  </h5>
                   <div className="flex gap-4">
                     <button
                       onClick={() => setMethod("card")}
                       className={`flex-1 flex items-center justify-center gap-3 p-5 rounded-4xl border-2 transition-all ${
-                        method === "card" ? "border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10" : "border-[#f2f4f6]"
+                        method === "card"
+                          ? "border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10"
+                          : "border-[#f2f4f6]"
                       }`}
                     >
                       <CreditCard size={20} />
@@ -216,7 +260,9 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
                     <button
                       onClick={() => setMethod("cash")}
                       className={`flex-1 flex items-center justify-center gap-3 p-5 rounded-4xl border-2 transition-all ${
-                        method === "cash" ? "border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10" : "border-[#f2f4f6]"
+                        method === "cash"
+                          ? "border-primary bg-primary/5 text-primary shadow-lg shadow-primary/10"
+                          : "border-[#f2f4f6]"
                       }`}
                     >
                       <Wallet size={20} />
@@ -226,7 +272,9 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <h5 className="text-sm font-black text-[#adb5bd] uppercase tracking-widest pl-2">Memo</h5>
+                  <h5 className="text-sm font-black text-[#adb5bd] uppercase tracking-widest pl-2">
+                    Memo
+                  </h5>
                   <textarea
                     value={memo}
                     onChange={(e) => setMemo(e.target.value)}
@@ -257,7 +305,10 @@ export function TransactionInputModal({ isOpen, onClose, initialData }: Transact
                 className="w-full py-5 bg-[#191f28] text-white rounded-4xl font-black text-lg disabled:opacity-30 flex items-center justify-center gap-3 group"
               >
                 다음단계
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight
+                  size={18}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </motion.button>
             )}
           </div>

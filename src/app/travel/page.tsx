@@ -141,17 +141,17 @@ export default function TravelPage() {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 pb-32 -mt-6">
       {/* Detail Header (Replaces global header) */}
-      <header className="sticky top-0 z-50 flex h-16 items-center justify-between px-6 bg-white/60 backdrop-blur-md border-b border-[#f2f4f6]/50 -mx-6 mb-6">
+      <header className="sticky top-0 z-50 flex h-16 items-center justify-between px-4 bg-white/90 backdrop-blur-md border-b border-[#f2f4f6] -mx-5 mb-6">
         <button 
           onClick={handleBack}
-          className="p-2 -ml-2 hover:bg-[#f2f4f6] rounded-full text-[#191f28] transition-all"
+          className="p-2 hover:bg-[#f2f4f6] rounded-full text-[#191f28] transition-all"
         >
           <ChevronLeft size={24} />
         </button>
-        <span className="font-bold text-lg text-[#191f28] absolute left-1/2 -translate-x-1/2">
+        <span className="font-bold text-[16px] text-[#191f28] absolute left-1/2 -translate-x-1/2 truncate max-w-[180px]">
           {selectedTrip?.name}
         </span>
-        <button className="p-2 -mr-2 hover:bg-[#f2f4f6] rounded-full text-[#adb5bd] transition-all">
+        <button className="p-2 hover:bg-[#f2f4f6] rounded-full text-[#adb5bd] transition-all">
           <Settings2 size={20} />
         </button>
       </header>

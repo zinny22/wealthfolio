@@ -1,74 +1,60 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ModeToggle } from "@/components/mode-toggle";
 import { useAuth } from "@/context/auth-context";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import {
   LayoutDashboard,
   Wallet,
-  PiggyBank,
-  ShieldCheck,
   Plane,
-  Settings2,
+  ChevronRight,
   Filter,
   Menu,
   LogOut,
   User as UserIcon,
-  PieChart,
 } from "lucide-react";
 import { FilterDrawer } from "@/components/shared/FilterDrawer";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { useState } from "react";
-
+import { useTransactionStore } from "@/store/useTransactionStore";
 import { motion, AnimatePresence } from "framer-motion";
+import { ModernBottomSheet } from "@/components/shared/ModernBottomSheet";
 
 const NAV_ITEMS = [
-  { label: "홈", href: "/", icon: LayoutDashboard },
-  { label: "예산", href: "/budget", icon: Wallet },
-  { label: "여행", href: "/travel", icon: Plane },
+  { label: "홈", href: "/", icon: LayoutDashboard, color: "bg-blue-50 text-blue-600" },
+  { label: "예산", href: "/budget", icon: Wallet, color: "bg-teal-50 text-teal-600" },
+  { label: "여행", href: "/travel", icon: Plane, color: "bg-purple-50 text-purple-600" },
 ];
 
-function NavContent({
-  pathname,
-  onLinkClick,
-}: {
-  pathname: string;
-  onLinkClick?: () => void;
-}) {
+function NavGrid({ pathname, onLinkClick }: { pathname: string; onLinkClick?: () => void }) {
   return (
-    <nav className="flex-1 space-y-1 px-4 py-6 text-left">
-      <ul className="space-y-1 text-left">
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <li key={item.href} className="text-left">
-              <Link
-                href={item.href}
-                onClick={onLinkClick}
-                className={`group flex items-center gap-4 rounded-xl px-4 py-3 text-[15px] font-semibold transition-all duration-200 ${
-                  isActive
-                    ? "bg-[#3182f61a] text-[#3182f6]"
-                    : "text-[#4e5968] hover:bg-[#f2f4f6] hover:text-[#191f28]"
-                }`}
-              >
-                <item.icon className={`h-5 w-5 ${isActive ? "text-[#3182f6]" : "text-[#8b95a1]"}`} />
-                {item.label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+    <div className="grid grid-cols-2 gap-3">
+      {NAV_ITEMS.map((item) => {
+        const isActive = pathname === item.href;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onLinkClick}
+            className={`flex items-center gap-4 p-5 rounded-[2rem] border-2 transition-all group ${
+              isActive 
+                ? "border-primary bg-primary/5 shadow-sm" 
+                : "border-transparent bg-[#f9fafb] hover:bg-white hover:border-[#f2f4f6] hover:shadow-md"
+            }`}
+          >
+            <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 ${isActive ? 'bg-primary text-white shadow-lg shadow-primary/20' : item.color}`}>
+              <item.icon size={22} />
+            </div>
+            <span className={`text-[15px] font-black ${isActive ? 'text-[#191f28]' : 'text-[#4e5968]'}`}>
+              {item.label}
+            </span>
+          </Link>
+        );
+      })}
+    </div>
   );
 }
 
@@ -85,62 +71,58 @@ function UserProfile() {
     }
   };
 
-  if (loading) return <div className="p-4 text-xs text-center italic text-muted-foreground animate-pulse">로딩 중...</div>;
-
-  if (!user) {
-    return (
-      <div className="flex flex-col gap-2 p-4">
-        <Button
-          size="sm"
-          variant="default"
-          className="w-full"
-          onClick={() => router.push("/login")}
-        >
-          로그인
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="w-full"
-          onClick={() => router.push("/signup")}
-        >
-          회원가입
-        </Button>
-      </div>
-    );
-  }
+  if (loading) return null;
+  if (!user) return null;
 
   return (
-    <div className="flex flex-col gap-2 p-6 text-left">
-      <div className="flex items-center gap-3 px-2 py-3 bg-[#f9fafb] rounded-2xl border border-[#e5e8eb]/50">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-sm border border-[#e5e8eb]">
-          <UserIcon className="h-5 w-5 text-[#8b95a1]" />
+    <div className="space-y-4">
+      <div className="flex items-center gap-4 p-5 bg-[#f9fafb] border border-[#f2f4f6] rounded-[2rem] group transition-all hover:bg-white hover:shadow-md">
+        <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border border-[#e5e8eb] shadow-sm group-hover:scale-105 transition-transform">
+          <UserIcon className="text-[#8b95a1]" size={24} />
         </div>
-        <div className="flex flex-col overflow-hidden text-left">
-          <span className="text-sm font-bold text-[#191f28] truncate">
-            {user.displayName || "사용자"}
-          </span>
-          <span className="text-[11px] text-[#8b95a1] truncate">
-            {user.email}
-          </span>
+        <div className="flex flex-col min-w-0">
+          <span className="text-[17px] font-black text-[#191f28]">{user.displayName || "테스트 사용자"}</span>
+          <span className="text-[12px] font-bold text-[#adb5bd] truncate">{user.email}</span>
         </div>
       </div>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="w-full justify-start text-[#8b95a1] hover:text-[#191f28] hover:bg-[#f2f4f6]"
+      
+      <button 
         onClick={handleLogout}
+        className="w-full flex items-center gap-3 p-4 px-6 text-[#adb5bd] font-black text-[14px] hover:text-expense transition-colors"
       >
-        <LogOut className="mr-2 h-4 w-4" />
-        로그아웃
-      </Button>
+        <LogOut size={16} /> 로그아웃
+      </button>
     </div>
   );
 }
 
-export function Sidebar() {
-  return null; 
+function CategorySettingsLink({ onLinkClick }: { onLinkClick: () => void }) {
+  const router = useRouter();
+  const { categories } = useTransactionStore();
+
+  return (
+    <button 
+      onClick={() => {
+        onLinkClick();
+        router.push("/settings/categories");
+      }}
+      className="w-full flex items-center justify-between p-5 bg-white border border-[#f2f4f6] rounded-[2rem] hover:bg-[#f9fafb] hover:shadow-md transition-all group"
+    >
+      <div className="flex items-center gap-4">
+        <div className="w-11 h-11 bg-primary/10 text-primary rounded-2xl flex items-center justify-center">
+           <Filter size={22} />
+        </div>
+        <div className="flex flex-col text-left">
+           <span className="text-[16px] font-black text-[#191f28]">카테고리 설정</span>
+           <span className="text-[11px] font-bold text-[#adb5bd]">현재 {categories.length}개의 카테고리 관리</span>
+        </div>
+      </div>
+      <ChevronRight size={20} className="text-[#adb5bd] group-hover:translate-x-1 transition-transform" />
+    </button>
+  );
 }
+
+export function Sidebar() { return null; }
 
 export function MobileBottomNav() {
   const pathname = usePathname();
@@ -148,74 +130,49 @@ export function MobileBottomNav() {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   
-  const isTravelDetail = pathname === "/travel" && searchParams.get("tripId");
-  const isAnalysis = pathname === "/analysis";
-  
-  if (!user || isTravelDetail || isAnalysis) return null;
-
-  const bottomItems = NAV_ITEMS;
+  if (!user || pathname === "/analysis" || (pathname === "/travel" && searchParams.get("tripId"))) return null;
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[600px] bg-white/80 backdrop-blur-2xl border-t border-[#f2f4f6] pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.03)] outline-none">
-      <div className="flex justify-around items-center h-20 px-4">
-        {bottomItems.map((item) => {
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[700px] bg-white/95 backdrop-blur-2xl border-t border-[#f2f4f6] pb-safe shadow-[0_-10px_50px_rgba(0,0,0,0.05)] sm:rounded-t-[32px]">
+      <div className="flex justify-around items-center h-20 px-2">
+        {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`relative flex flex-col items-center justify-center gap-1 w-full h-full transition-colors duration-300 ${
-                isActive ? "text-primary" : "text-[#adb5bd]"
-              }`}
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={isActive ? "active" : "inactive"}
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: isActive ? 1.1 : 1 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                >
-                  <item.icon className="h-6 w-6" />
-                </motion.div>
-              </AnimatePresence>
-              <span className={`text-[10px] font-bold ${isActive ? "text-primary" : ""}`}>
-                {item.label}
-              </span>
-              {isActive && (
-                <motion.div
-                  layoutId="activeTab"
-                  className="absolute -top-px h-[2px] w-12 bg-primary rounded-full"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                />
-              )}
+            <Link key={item.href} href={item.href} className={`flex flex-col items-center justify-center gap-1 w-full h-full text-[10px] font-black transition-all ${isActive ? "text-primary scale-110" : "text-[#adb5bd]"}`}>
+              <item.icon size={24} />
+              <span>{item.label}</span>
             </Link>
           );
         })}
-        
-        {/* 전체 메뉴 버튼 (Sheet 활용) */}
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <button className="flex flex-col items-center justify-center gap-1.5 w-full h-full text-[#adb5bd] hover:text-[#191f28] transition-colors outline-none focus:outline-none focus:ring-0">
-              <Menu className="h-6 w-6" />
-              <span className="text-[10px] font-bold">전체</span>
-            </button>
-          </SheetTrigger>
-          <SheetContent side="bottom" className="rounded-t-[32px] p-0 h-[auto] max-h-[85vh] overflow-hidden border-none shadow-2xl bg-white outline-none focus:outline-none focus:visible:ring-0">
-            <div className="mx-auto w-12 h-1.5 bg-[#e5e8eb] rounded-full mt-4 mb-2" />
-            <SheetHeader className="px-8 pt-6 pb-2 text-left">
-              <SheetTitle className="text-xl font-bold text-[#191f28]">전체 서비스</SheetTitle>
-            </SheetHeader>
-            <div className="pb-16 text-left">
-              <NavContent 
-                pathname={pathname} 
-                onLinkClick={() => setOpen(false)} 
-              />
-              <div className="px-6 mt-4">
-                <UserProfile />
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
+        <button onClick={() => setOpen(true)} className="flex flex-col items-center justify-center gap-1 w-full h-full text-[#adb5bd] hover:text-[#191f28] transition-all font-black text-[10px]">
+          <Menu size={24} />
+          <span>전체</span>
+        </button>
+
+        <ModernBottomSheet
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          title="전체 서비스"
+          description="자산 관리를 위한 주요 메뉴와 설정입니다."
+          maxWidth="700px"
+        >
+          <div className="space-y-10 pt-6 pb-20">
+            <section className="space-y-4">
+              <h5 className="text-[13px] font-black text-[#191f28] ml-2 tracking-tight">메인 메뉴</h5>
+              <NavGrid pathname={pathname} onLinkClick={() => setOpen(false)} />
+            </section>
+
+            <section className="space-y-4">
+              <h5 className="text-[13px] font-black text-[#191f28] ml-2 tracking-tight">환경 설정</h5>
+              <CategorySettingsLink onLinkClick={() => setOpen(false)} />
+            </section>
+
+            <section className="space-y-4">
+              <h5 className="text-[13px] font-black text-[#191f28] ml-2 tracking-tight">나의 프로필</h5>
+              <UserProfile />
+            </section>
+          </div>
+        </ModernBottomSheet>
       </div>
     </nav>
   );
@@ -225,12 +182,9 @@ export function MobileHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { user } = useAuth();
   const [filterOpen, setFilterOpen] = useState(false);
 
-  const isTravelDetail = pathname === "/travel" && searchParams.get("tripId");
-  const isAnalysisDetail = pathname === "/analysis";
-  if (isTravelDetail || isAnalysisDetail) return null;
+  if (pathname === "/analysis" || (pathname === "/travel" && searchParams.get("tripId"))) return null;
 
   return (
     <>
@@ -239,36 +193,14 @@ export function MobileHeader() {
           {NAV_ITEMS.find((item) => item.href === pathname)?.label || "Wealthfolio"}
         </span>
         <div className="flex items-center gap-2">
-          {pathname === "/" && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="rounded-full text-[#adb5bd] hover:bg-[#f2f4f6]"
-              onClick={() => router.push("/analysis")}
-            >
-              <PieChart className="h-5 w-5" />
-            </Button>
-          )}
-          {["/", "/analysis"].includes(pathname) && (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="rounded-full text-[#adb5bd] hover:bg-[#f2f4f6]"
-              onClick={() => setFilterOpen(true)}
-            >
-              <Filter className="h-5 w-5" />
-            </Button>
-          )}
-          <Button variant="ghost" size="icon" className="rounded-full text-[#adb5bd] hover:bg-[#f2f4f6]">
-            <Settings2 className="h-5 w-5" />
-          </Button>
+           {pathname === "/" && (
+              <Button variant="ghost" size="icon" className="rounded-full text-[#adb5bd] hover:bg-[#f2f4f6]" onClick={() => router.push("/analysis")}><PieChart className="h-5 w-5" /></Button> // Error check: PieChart not imported? 
+           )}
         </div>
       </header>
-      
-      <FilterDrawer 
-        isOpen={filterOpen} 
-        onClose={() => setFilterOpen(false)} 
-      />
+      <FilterDrawer isOpen={filterOpen} onClose={() => setFilterOpen(false)} />
     </>
   );
 }
+
+function PieChart({ className }: { className?: string }) { return <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83" /><path d="M22 12A10 10 0 0 0 12 2v10z" /></svg>; }

@@ -101,23 +101,28 @@ export function TravelSpendingModal({ isOpen, onClose, trip, initialData }: Prop
         animate={{ opacity: 1 }} 
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+        className="absolute inset-0 bg-black/20 backdrop-blur-sm" 
       />
       
       <motion.div
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
+        initial={{ y: "100%" }} 
+        animate={{ y: 0 }} 
         exit={{ y: "100%" }}
-        className="relative w-full max-w-[500px] bg-white rounded-t-[2.5rem] sm:rounded-4xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[3rem] shadow-2xl p-8 h-[85vh] flex flex-col overflow-hidden outline-none"
       >
-        <div className="p-6 pb-2 flex items-center justify-between">
-          <h3 className="text-xl font-black text-[#191f28]">지출 기록하기</h3>
-          <button onClick={onClose} className="p-2 hover:bg-[#f2f4f6] rounded-full text-[#adb5bd] transition-all">
-            <X size={24} />
+        {/* Universal Sheet Indicator */}
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-[#e5e8eb] rounded-full" />
+
+        <div className="flex items-center justify-between mt-4 mb-8">
+          <button onClick={onClose} className="p-2.5 bg-[#f2f4f6] text-[#8b95a1] rounded-full hover:bg-[#e5e8eb] transition-all">
+            <X size={18} />
           </button>
+          <span className="text-base font-black text-[#191f28]">{initialData ? '지출 내역 수정' : '지출 내역 추가'}</span>
+          <div className="w-10 h-10" />
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-8">
+        <div className="flex-1 overflow-y-auto space-y-8 -mx-8 px-8">
           {/* 금액 입력 */}
           <div className="space-y-3">
              <div className="flex items-center justify-between">

@@ -13,7 +13,7 @@ export function FloatingActionButton({ onClick }: FABProps) {
       whileHover={{ scale: 1.1, rotate: 90 }}
       whileTap={{ scale: 0.9 }}
       onClick={onClick}
-      className="fixed bottom-24 right-5 z-[60] w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-xl shadow-primary/30 border-4 border-white active:bg-primary/90 transition-colors"
+      className="fixed bottom-24 right-8 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-60 border-4 border-white transition-all active:scale-95"
     >
       <Plus size={28} strokeWidth={3} />
     </motion.button>

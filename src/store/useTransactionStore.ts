@@ -20,6 +20,11 @@ interface TransactionState {
   selectedCategoryIds: string[];
   setFilter: (categoryIds: string[]) => void;
   
+  // Categories
+  addCategory: (cat: Omit<Category, 'id'>) => void;
+  deleteCategory: (id: string) => void;
+  reorderCategories: (categories: Category[]) => void;
+  
   // Init/Mock
   initializeMockData: () => void;
 }
@@ -75,6 +80,16 @@ export const useTransactionStore = create<TransactionState>()(
       
       selectedCategoryIds: [],
       setFilter: (ids) => set({ selectedCategoryIds: ids }),
+      
+      addCategory: (cat) => set((state) => ({
+        categories: [...state.categories, { ...cat, id: Math.random().toString(36).substring(2, 9) }]
+      })),
+      
+      deleteCategory: (id) => set((state) => ({
+        categories: state.categories.filter(c => c.id !== id)
+      })),
+      
+      reorderCategories: (newCats) => set({ categories: newCats }),
       
       initializeMockData: () => {
         const now = new Date();
