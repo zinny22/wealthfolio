@@ -78,7 +78,10 @@ export default function Calendar({
       {/* Range Navigation */}
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-extrabold tracking-tight text-foreground">
-          {format(currentDate, viewMode === "month" ? "yyyy년 M월" : "M월 d일~", { locale: ko })}
+          {viewMode === "month" 
+            ? format(currentDate, "yyyy년 M월", { locale: ko })
+            : `${format(startOfWeek(currentDate, { locale: ko }), "M.d")} ~ ${format(endOfWeek(currentDate, { locale: ko }), "M.d")}`
+          }
         </h3>
         <div className="flex gap-1">
           <button onClick={prevRange} className="p-2 text-slate-300 hover:text-primary transition-colors active:scale-90">
@@ -124,7 +127,7 @@ export default function Calendar({
               onClick={() => onDateClick?.(day)}
               className={`min-h-[64px] pt-2 flex flex-col items-center cursor-pointer transition-all rounded-xl ${
                 isSelected ? "bg-slate-50 dark:bg-slate-800/30" : "hover:bg-slate-50/50"
-              } ${!isSameMonth(day, monthStart) ? "opacity-0 pointer-events-none" : ""}`}
+              } ${viewMode === "month" && !isSameMonth(day, monthStart) ? "opacity-0 pointer-events-none" : ""}`}
             >
               <div
                 className={`text-[12px] font-bold w-6 h-6 flex items-center justify-center rounded-full transition-all ${

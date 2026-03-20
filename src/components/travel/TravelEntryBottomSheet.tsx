@@ -104,11 +104,12 @@ export default function TravelEntryBottomSheet({
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] bg-white dark:bg-slate-900 rounded-t-4xl p-8 pb-12 z-[70] shadow-2xl shadow-black/20 max-h-[92vh] overflow-y-auto"
+            className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] bg-white dark:bg-slate-900 rounded-t-4xl z-[70] shadow-2xl shadow-black/20 max-h-[92vh] flex flex-col"
           >
-            <div className="w-12 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mx-auto mb-8 shrink-0" />
+            <div className="w-12 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full mx-auto my-4 shrink-0" />
             
-            <div className="space-y-10">
+            <div className="flex-1 overflow-y-auto px-8 pb-4 no-scrollbar">
+              <div className="space-y-8 py-2">
               {/* Amount Input */}
               <div className="space-y-4">
                 <p className="text-[12px] font-bold text-slate-400 ml-1 uppercase">지출 금액 ({currencySymbol})</p>
@@ -211,11 +212,16 @@ export default function TravelEntryBottomSheet({
                 />
               </div>
 
-              <div className="flex gap-3 mt-4">
+              </div>
+            </div>
+
+            {/* Fixed Footer */}
+            <div className="px-8 pb-10 pt-4 bg-white dark:bg-slate-900 border-t border-slate-50 dark:border-slate-800 shadow-[0_-10px_20px_rgba(0,0,0,0.02)]">
+              <div className="flex gap-3">
                 {initialData && (
                   <button
                     onClick={handleDelete}
-                    className="w-20 h-16 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-2xl flex items-center justify-center transition-all active:scale-95"
+                    className="w-16 h-16 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-2xl flex items-center justify-center transition-all active:scale-95 shrink-0"
                   >
                     <X size={24} strokeWidth={3} />
                   </button>

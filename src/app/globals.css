@@ -35,6 +35,7 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  scrollbar-gutter: stable;
 }
 
 /* 모바일 앱 느낌을 위한 스크롤바 커스텀 (데스크탑에서도 깔끔하게 보이도록) */
